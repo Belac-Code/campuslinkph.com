@@ -1,0 +1,1549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CampusLink — Campus Commerce & Delivery Network</title>
+<meta name="description" content="CampusLink connects student customers, campus sellers, and student riders on one trusted logistics network — fast delivery, verified sellers, real campus coverage.">
+<meta property="og:title" content="CampusLink — Campus Commerce & Delivery Network">
+<meta property="og:description" content="The logistics layer for campus life. Order, sell, and deliver — verified, fast, local.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%230A0C10%22/><circle cx=%2250%22 cy=%2250%22 r=%2218%22 fill=%22%2300E5FF%22/></svg>">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<style>
+/* ============================================================
+   CAMPUSLINK — DESIGN TOKENS
+   ============================================================ */
+:root{
+  --obsidian: #0A0C10;
+  --surface: #12151B;
+  --surface-2: #181C24;
+  --line: rgba(232,237,242,0.08);
+  --text: #E8EDF2;
+  --text-muted: #8A93A3;
+
+  --cyan: #00E5FF;        /* Customer niche / primary accent */
+  --cyan-dim: rgba(0,229,255,0.12);
+  --amber: #FFB020;       /* Rider niche */
+  --amber-dim: rgba(255,176,32,0.12);
+  --violet: #8B5CF6;      /* Seller niche */
+  --violet-dim: rgba(139,92,246,0.12);
+
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --radius: 14px;
+  --radius-sm: 8px;
+  --shadow-soft: 0 20px 60px -20px rgba(0,0,0,0.6);
+  --ease: cubic-bezier(.16,.84,.44,1);
+}
+
+[data-theme="light"]{
+  --obsidian: #F5F6F8;
+  --surface: #FFFFFF;
+  --surface-2: #EFF1F4;
+  --line: rgba(10,12,16,0.08);
+  --text: #11141A;
+  --text-muted: #5B6470;
+}
+
+*{ box-sizing: border-box; margin:0; padding:0; }
+html{ scroll-behavior: smooth; }
+body{
+  background: var(--obsidian);
+  color: var(--text);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  overflow-x: hidden;
+  transition: background .4s var(--ease), color .4s var(--ease);
+}
+img{ max-width:100%; display:block; }
+a{ color:inherit; text-decoration:none; }
+button{ font-family: inherit; cursor:pointer; border:none; background:none; color:inherit; }
+ul{ list-style:none; }
+input,textarea,select{ font-family: inherit; }
+
+.wrap{ max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+section{ position: relative; padding: 120px 0; }
+.eyebrow{
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom: 18px;
+}
+.eyebrow::before{ content:''; width:18px; height:1px; background: var(--cyan); }
+h1,h2,h3,h4{ font-family: var(--font-display); font-weight:600; letter-spacing:-0.02em; }
+h2.section-title{ font-size: clamp(28px, 4vw, 42px); max-width: 640px; margin-bottom: 18px; }
+.section-lead{ color: var(--text-muted); font-size: 17px; max-width: 540px; margin-bottom: 56px; }
+.section-head{ display:flex; justify-content:space-between; align-items:flex-end; gap: 40px; flex-wrap:wrap; margin-bottom: 56px; }
+.section-head .section-lead{ margin-bottom:0; }
+
+::selection{ background: var(--cyan); color: #00121A; }
+
+/* focus visibility */
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible{
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:10px;
+  padding: 14px 26px; border-radius: 999px; font-weight:600; font-size:15px;
+  transition: transform .25s var(--ease), box-shadow .25s var(--ease), background .25s var(--ease);
+  white-space: nowrap;
+}
+.btn-primary{ background: var(--cyan); color:#00121A; }
+.btn-primary:hover{ transform: translateY(-2px); box-shadow: 0 12px 30px -8px rgba(0,229,255,0.5); }
+.btn-ghost{ border:1px solid var(--line); color: var(--text); }
+.btn-ghost:hover{ border-color: var(--cyan); color: var(--cyan); transform: translateY(-2px); }
+.btn-block{ width:100%; }
+.btn-sm{ padding:10px 18px; font-size:13px; }
+.btn[data-niche="customer"]{ background: var(--cyan); color:#00121A; }
+.btn[data-niche="seller"]{ background: var(--violet); color:#fff; }
+.btn[data-niche="rider"]{ background: var(--amber); color:#1A1200; }
+
+/* ============================================================
+   NAV
+   ============================================================ */
+.nav{
+  position: fixed; top:0; left:0; right:0; z-index: 500;
+  padding: 22px 0;
+  transition: padding .3s var(--ease), background .3s var(--ease), backdrop-filter .3s var(--ease), border-color .3s var(--ease);
+  border-bottom: 1px solid transparent;
+}
+.nav.scrolled{
+  padding: 14px 0;
+  background: color-mix(in srgb, var(--obsidian) 78%, transparent);
+  backdrop-filter: blur(16px);
+  border-bottom-color: var(--line);
+}
+.nav .wrap{ display:flex; align-items:center; justify-content:space-between; }
+.brand{ display:flex; align-items:center; gap:10px; font-family: var(--font-display); font-weight:700; font-size:19px; }
+.brand-mark{ width:30px; height:30px; border-radius:9px; background: linear-gradient(135deg, var(--cyan), var(--violet)); position:relative; flex-shrink:0; }
+.brand-mark::after{ content:''; position:absolute; inset:8px; border-radius:5px; background: var(--obsidian); }
+.nav-links{ display:flex; align-items:center; gap:34px; }
+.nav-links a{ font-size:14px; color: var(--text-muted); transition: color .2s; }
+.nav-links a:hover{ color: var(--text); }
+.nav-actions{ display:flex; align-items:center; gap:14px; }
+.theme-toggle{
+  width:38px; height:38px; border-radius:50%; border:1px solid var(--line);
+  display:flex; align-items:center; justify-content:center; font-size:16px;
+}
+.nav-burger{ display:none; width:38px; height:38px; border:1px solid var(--line); border-radius:9px; align-items:center; justify-content:center; }
+.nav-burger span, .nav-burger span::before, .nav-burger span::after{
+  content:''; display:block; width:16px; height:2px; background: var(--text); position:relative; transition: all .25s;
+}
+.nav-burger span::before{ position:absolute; top:-5px; }
+.nav-burger span::after{ position:absolute; top:5px; }
+
+/* ============================================================
+   ROUTE LINE — SIGNATURE ELEMENT
+   A dotted courier route runs the spine of the page; a rider node
+   travels it as you scroll, "stopping" at each numbered waypoint.
+   This literalizes CampusLink's job: it is the route between people.
+   ============================================================ */
+.route-rail{
+  position:absolute; left:50%; top:0; bottom:0; width:2px;
+  transform: translateX(-50%);
+  z-index:0; pointer-events:none; display:none;
+}
+.route-rail svg{ width:100%; height:100%; }
+.route-progress{ stroke: var(--cyan); }
+.route-track{ stroke: var(--line); }
+.route-rider{
+  position:absolute; left:50%; width:14px; height:14px; border-radius:50%;
+  background: var(--cyan); transform: translate(-50%,-50%);
+  box-shadow: 0 0 0 6px var(--cyan-dim), 0 0 24px var(--cyan);
+  transition: top .1s linear;
+  z-index:1;
+}
+@media (min-width: 1100px){ .route-rail{ display:block; } }
+
+.waypoint{ position:relative; }
+.waypoint-marker{
+  position:absolute; left:50%; top:64px; transform:translateX(-50%);
+  width:54px; height:54px; border-radius:50%;
+  background: var(--surface); border:1px solid var(--line);
+  display:none; align-items:center; justify-content:center;
+  font-family: var(--font-mono); font-size:13px; color: var(--text-muted);
+  z-index:2;
+}
+@media (min-width: 1100px){ .waypoint-marker{ display:flex; } }
+.waypoint-marker.is-active{ border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 0 6px var(--cyan-dim); }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero{
+  min-height: 100vh; display:flex; align-items:center; padding-top:140px; padding-bottom: 80px;
+  position:relative; overflow:hidden;
+}
+.hero::before{
+  content:''; position:absolute; inset:-20%;
+  background:
+    radial-gradient(40% 35% at 20% 20%, var(--cyan-dim), transparent 70%),
+    radial-gradient(35% 35% at 85% 15%, var(--violet-dim), transparent 70%),
+    radial-gradient(30% 30% at 70% 85%, var(--amber-dim), transparent 70%);
+  filter: blur(40px); z-index:0; pointer-events:none;
+}
+.hero-grid{
+  position:absolute; inset:0; z-index:0; opacity:.5;
+  background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 35%, black, transparent);
+}
+.hero .wrap{ position:relative; z-index:1; }
+.hero-content{ max-width: 760px; }
+.hero h1{ font-size: clamp(38px, 6vw, 68px); line-height: 1.05; margin-bottom:24px; }
+.hero h1 .accent{ color: var(--cyan); }
+.hero-sub{ font-size: 18px; color: var(--text-muted); max-width: 520px; margin-bottom: 40px; }
+.hero-ctas{ display:flex; gap:14px; flex-wrap:wrap; margin-bottom: 64px; }
+.hero-stats{ display:flex; gap:48px; flex-wrap:wrap; }
+.hero-stat .num{ font-family: var(--font-mono); font-size: 30px; color: var(--cyan); font-weight:700; }
+.hero-stat .label{ font-size:13px; color: var(--text-muted); margin-top:4px; }
+
+.hero-route-preview{
+  position:absolute; right:-60px; top:50%; transform: translateY(-50%);
+  width: 480px; opacity:.9; z-index:0; display:none;
+}
+@media (min-width: 1280px){ .hero-route-preview{ display:block; } }
+
+/* ============================================================
+   PROBLEMS GRID
+   ============================================================ */
+.grid-4{ display:grid; grid-template-columns: repeat(4,1fr); gap:20px; }
+.grid-3{ display:grid; grid-template-columns: repeat(3,1fr); gap:20px; }
+.grid-2{ display:grid; grid-template-columns: 1fr 1fr; gap:20px; }
+@media (max-width: 920px){ .grid-4{ grid-template-columns: 1fr 1fr; } .grid-3{ grid-template-columns: 1fr; } }
+@media (max-width: 600px){ .grid-4{ grid-template-columns: 1fr; } .grid-2{ grid-template-columns: 1fr; } }
+
+.card{
+  background: var(--surface); border:1px solid var(--line); border-radius: var(--radius);
+  padding: 30px; transition: transform .3s var(--ease), border-color .3s var(--ease);
+}
+.card:hover{ transform: translateY(-4px); border-color: color-mix(in srgb, var(--cyan) 40%, var(--line)); }
+.card-icon{
+  width:44px; height:44px; border-radius:11px; display:flex; align-items:center; justify-content:center;
+  background: var(--cyan-dim); color: var(--cyan); margin-bottom: 20px;
+}
+.card h4{ font-size:17px; margin-bottom:10px; }
+.card p{ color: var(--text-muted); font-size: 14.5px; }
+.card-tag{ font-family: var(--font-mono); font-size:11px; color: var(--text-muted); letter-spacing:.08em; margin-bottom:14px; display:block; }
+
+/* ============================================================
+   ABOUT
+   ============================================================ */
+.about-layout{ display:grid; grid-template-columns: 1fr 1fr; gap:64px; align-items:center; }
+@media (max-width: 880px){ .about-layout{ grid-template-columns:1fr; } }
+.about-copy p{ color: var(--text-muted); margin-bottom: 18px; }
+.about-visual{
+  border-radius: var(--radius); border:1px solid var(--line); background: var(--surface);
+  aspect-ratio: 4/3; position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center;
+}
+.about-visual img{ width:100%; height:100%; object-fit:cover; opacity:.85; }
+.about-visual::after{ content:''; position:absolute; inset:0; background: linear-gradient(180deg, transparent 40%, var(--obsidian) 100%); }
+
+/* ============================================================
+   VALUES
+   ============================================================ */
+.value-card{ text-align:left; }
+.value-card .card-icon{ background: var(--violet-dim); color: var(--violet); }
+
+/* ============================================================
+   MARKETPLACE / HOW IT WORKS
+   ============================================================ */
+.steps{ display:grid; grid-template-columns: repeat(4,1fr); gap:0; position:relative; }
+@media (max-width: 880px){ .steps{ grid-template-columns:1fr; gap:30px; } }
+.step{ position:relative; padding: 0 20px; }
+.step:first-child{ padding-left:0; }
+.step-num{ font-family: var(--font-mono); font-size:13px; color: var(--cyan); margin-bottom:14px; display:block; }
+.step h4{ font-size:16px; margin-bottom:8px; }
+.step p{ color: var(--text-muted); font-size:14px; }
+.step::before{
+  content:''; position:absolute; top:6px; left:0; width:100%; height:1px; background: var(--line);
+}
+@media (max-width: 880px){ .step::before{ display:none; } }
+
+.marketplace-preview{
+  margin-top:70px; background: var(--surface); border:1px solid var(--line); border-radius: var(--radius);
+  padding: 28px; display:grid; grid-template-columns: 220px 1fr; gap:24px;
+}
+@media (max-width: 760px){ .marketplace-preview{ grid-template-columns:1fr; } }
+.mp-cats{ display:flex; flex-direction:column; gap:8px; }
+.mp-cat{ padding:10px 14px; border-radius:9px; font-size:13.5px; color: var(--text-muted); }
+.mp-cat.is-active{ background: var(--cyan-dim); color: var(--cyan); font-weight:600; }
+.mp-search{ display:flex; align-items:center; gap:10px; background: var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:12px 16px; margin-bottom:18px; color: var(--text-muted); font-size:14px; }
+.mp-products{ display:grid; grid-template-columns: repeat(3,1fr); gap:14px; }
+@media (max-width:520px){ .mp-products{ grid-template-columns:1fr 1fr; } }
+.mp-product{ background: var(--surface-2); border-radius:10px; overflow:hidden; border:1px solid var(--line); }
+.mp-product img{ aspect-ratio:1; object-fit:cover; }
+.mp-product .pi{ padding:10px 12px; }
+.mp-product .pn{ font-size:13px; font-weight:600; margin-bottom:2px; }
+.mp-product .pp{ font-size:12px; color: var(--cyan); font-family: var(--font-mono); }
+
+/* ============================================================
+   NICHE SECTIONS (Customer / Seller / Rider)
+   ============================================================ */
+.niche-section{ border-top:1px solid var(--line); }
+.niche-block{ display:grid; grid-template-columns: 1fr 1fr; gap:60px; align-items:center; padding: 90px 0; border-bottom:1px solid var(--line); }
+.niche-block:last-child{ border-bottom:none; }
+.niche-block.reverse{ direction: rtl; }
+.niche-block.reverse > *{ direction: ltr; }
+@media (max-width: 880px){ .niche-block{ grid-template-columns:1fr; direction:ltr !important; padding:60px 0; } }
+.niche-tag{ font-family: var(--font-mono); font-size:12px; letter-spacing:.1em; text-transform:uppercase; padding:6px 14px; border-radius:999px; display:inline-block; margin-bottom:18px; }
+.niche-block[data-niche="customer"] .niche-tag{ background: var(--cyan-dim); color: var(--cyan); }
+.niche-block[data-niche="seller"] .niche-tag{ background: var(--violet-dim); color: var(--violet); }
+.niche-block[data-niche="rider"] .niche-tag{ background: var(--amber-dim); color: var(--amber); }
+.niche-block h3{ font-size: clamp(24px,3vw,32px); margin-bottom:16px; }
+.niche-list{ margin: 24px 0 30px; display:flex; flex-direction:column; gap:12px; }
+.niche-list li{ display:flex; gap:10px; font-size:14.5px; color: var(--text-muted); align-items:flex-start; }
+.niche-list li svg{ flex-shrink:0; margin-top:3px; }
+.niche-block[data-niche="customer"] .niche-list li svg{ color: var(--cyan); }
+.niche-block[data-niche="seller"] .niche-list li svg{ color: var(--violet); }
+.niche-block[data-niche="rider"] .niche-list li svg{ color: var(--amber); }
+.niche-visual{
+  border-radius: var(--radius); border:1px solid var(--line); background: var(--surface);
+  aspect-ratio:4/3.2; overflow:hidden; position:relative;
+}
+.niche-visual img{ width:100%; height:100%; object-fit:cover; }
+
+/* ============================================================
+   TESTIMONIALS
+   ============================================================ */
+.testi-track{ position:relative; max-width:700px; margin: 0 auto; text-align:center; min-height: 220px; }
+.testi-slide{ display:none; }
+.testi-slide.is-active{ display:block; animation: fadein .5s var(--ease); }
+@keyframes fadein{ from{ opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+.testi-quote{ font-size: 19px; font-family: var(--font-display); font-weight:500; margin-bottom: 26px; }
+.testi-person{ display:flex; align-items:center; justify-content:center; gap:12px; }
+.testi-avatar{ width:42px; height:42px; border-radius:50%; background: linear-gradient(135deg, var(--cyan), var(--violet)); }
+.testi-name{ font-weight:600; font-size:14px; }
+.testi-role{ font-size:12.5px; color: var(--text-muted); font-family: var(--font-mono); }
+.testi-dots{ display:flex; justify-content:center; gap:8px; margin-top:36px; }
+.testi-dot{ width:7px; height:7px; border-radius:50%; background: var(--line); transition: all .3s; }
+.testi-dot.is-active{ background: var(--cyan); width:22px; border-radius:4px; }
+
+/* ============================================================
+   FAQ
+   ============================================================ */
+.faq-list{ max-width: 760px; }
+.faq-item{ border-bottom:1px solid var(--line); }
+.faq-q{ width:100%; display:flex; justify-content:space-between; align-items:center; padding: 22px 0; text-align:left; font-size:16px; font-weight:600; gap:20px; }
+.faq-q .plus{ flex-shrink:0; width:22px; height:22px; position:relative; }
+.faq-q .plus::before, .faq-q .plus::after{ content:''; position:absolute; background: var(--cyan); top:50%; left:50%; transform:translate(-50%,-50%); transition: transform .3s var(--ease); }
+.faq-q .plus::before{ width:14px; height:2px; }
+.faq-q .plus::after{ width:2px; height:14px; }
+.faq-item.is-open .plus::after{ transform: translate(-50%,-50%) rotate(90deg); opacity:0; }
+.faq-a{ max-height:0; overflow:hidden; transition: max-height .35s var(--ease); }
+.faq-a p{ color: var(--text-muted); padding-bottom: 22px; font-size:14.5px; max-width:600px; }
+
+/* ============================================================
+   CONTACT
+   ============================================================ */
+.contact-layout{ display:grid; grid-template-columns: 1fr 1fr; gap: 50px; }
+@media (max-width: 880px){ .contact-layout{ grid-template-columns:1fr; } }
+.field{ margin-bottom:18px; }
+.field label{ display:block; font-size:13px; color: var(--text-muted); margin-bottom:8px; }
+.field input, .field textarea, .field select{
+  width:100%; background: var(--surface); border:1px solid var(--line); border-radius: var(--radius-sm);
+  padding: 13px 16px; color: var(--text); font-size:14.5px; transition: border-color .2s;
+}
+.field input:focus, .field textarea:focus, .field select:focus{ border-color: var(--cyan); outline:none; }
+.field-error{ color:#FF6B6B; font-size:12.5px; margin-top:6px; display:none; }
+.field.has-error input, .field.has-error textarea{ border-color:#FF6B6B; }
+.field.has-error .field-error{ display:block; }
+.map-embed{ border-radius: var(--radius); overflow:hidden; border:1px solid var(--line); aspect-ratio:4/3; }
+.map-embed iframe{ width:100%; height:100%; border:0; filter: grayscale(.3) invert(.92) contrast(.85); }
+[data-theme="light"] .map-embed iframe{ filter:none; }
+.whatsapp-cta{ display:flex; align-items:center; gap:14px; background: var(--surface); border:1px solid var(--line); border-radius: var(--radius); padding:20px; margin-top:18px; }
+.whatsapp-cta .wa-icon{ width:42px; height:42px; border-radius:50%; background:#25D366; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+footer{ border-top:1px solid var(--line); padding: 70px 0 30px; }
+.footer-top{ display:grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap:40px; margin-bottom:60px; }
+@media (max-width: 760px){ .footer-top{ grid-template-columns: 1fr 1fr; } }
+.footer-col h5{ font-size:13px; color: var(--text-muted); margin-bottom:16px; letter-spacing:.06em; text-transform:uppercase; }
+.footer-col ul{ display:flex; flex-direction:column; gap:10px; }
+.footer-col a{ font-size:14px; color: var(--text-muted); transition: color .2s; }
+.footer-col a:hover{ color: var(--cyan); }
+.footer-bottom{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; padding-top:30px; border-top:1px solid var(--line); font-size:13px; color: var(--text-muted); }
+.footer-socials{ display:flex; gap:14px; }
+.footer-socials a{ width:36px; height:36px; border:1px solid var(--line); border-radius:50%; display:flex; align-items:center; justify-content:center; }
+.newsletter{ display:flex; gap:8px; margin-top:14px; }
+.newsletter input{ flex:1; background: var(--surface); border:1px solid var(--line); border-radius:var(--radius-sm); padding:10px 12px; font-size:13px; color:var(--text); }
+
+/* ============================================================
+   SCROLL REVEAL
+   ============================================================ */
+.reveal{ opacity:0; transform: translateY(28px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
+.reveal.is-visible{ opacity:1; transform: translateY(0); }
+
+/* ============================================================
+   LOADER
+   ============================================================ */
+#loader{
+  position:fixed; inset:0; z-index:3000; background: var(--obsidian);
+  display:flex; align-items:center; justify-content:center; transition: opacity .6s var(--ease), visibility .6s var(--ease);
+}
+#loader.is-hidden{ opacity:0; visibility:hidden; pointer-events:none; }
+.loader-mark{ width:54px; height:54px; border-radius:16px; position:relative; }
+.loader-mark::before{ content:''; position:absolute; inset:0; border-radius:16px; border:2px solid var(--line); }
+.loader-mark::after{
+  content:''; position:absolute; inset:0; border-radius:16px; border:2px solid transparent; border-top-color: var(--cyan); border-right-color: var(--cyan);
+  animation: spin 1s linear infinite;
+}
+@keyframes spin{ to{ transform: rotate(360deg); } }
+
+/* ============================================================
+   TOASTS
+   ============================================================ */
+#toast-stack{ position:fixed; bottom:24px; right:24px; z-index:4000; display:flex; flex-direction:column; gap:10px; }
+.toast{
+  background: var(--surface); border:1px solid var(--line); border-left:3px solid var(--cyan);
+  padding:14px 18px; border-radius:10px; font-size:13.5px; box-shadow: var(--shadow-soft);
+  animation: toastin .3s var(--ease); max-width:320px;
+}
+@keyframes toastin{ from{ opacity:0; transform: translateX(20px);} to{opacity:1; transform:translateX(0);} }
+
+/* ============================================================
+   CUSTOM CURSOR (desktop only)
+   ============================================================ */
+.cursor-dot{ position:fixed; width:8px; height:8px; border-radius:50%; background: var(--cyan); pointer-events:none; z-index:5000; transform:translate(-50%,-50%); display:none; transition: transform .12s; }
+.cursor-ring{ position:fixed; width:32px; height:32px; border-radius:50%; border:1px solid var(--cyan); pointer-events:none; z-index:5000; transform:translate(-50%,-50%); display:none; transition: transform .25s var(--ease), width .2s, height .2s, opacity .2s; opacity:.6; }
+@media (hover:hover) and (pointer:fine){ .cursor-dot, .cursor-ring{ display:block; } }
+.cursor-ring.is-active{ width:48px; height:48px; opacity:1; }
+
+/* ============================================================
+   REGISTRATION MODAL
+   ============================================================ */
+.modal-overlay{
+  position:fixed; inset:0; z-index:2000; background: rgba(5,6,8,0.7); backdrop-filter: blur(6px);
+  display:flex; align-items:center; justify-content:center; padding: 24px;
+  opacity:0; visibility:hidden; transition: opacity .3s var(--ease), visibility .3s var(--ease);
+}
+.modal-overlay.is-open{ opacity:1; visibility:visible; }
+.modal{
+  background: var(--surface); border:1px solid var(--line); border-radius: 20px;
+  width:100%; max-width: 640px; max-height: 88vh; overflow-y:auto; position:relative;
+  transform: scale(.95) translateY(10px); transition: transform .3s var(--ease);
+  box-shadow: var(--shadow-soft);
+}
+.modal-overlay.is-open .modal{ transform: scale(1) translateY(0); }
+.modal-head{ display:flex; align-items:center; justify-content:space-between; padding: 24px 28px; border-bottom:1px solid var(--line); position:sticky; top:0; background:var(--surface); z-index:2; }
+.modal-close{ width:34px; height:34px; border-radius:50%; border:1px solid var(--line); display:flex; align-items:center; justify-content:center; }
+.modal-body{ padding: 28px; }
+
+.niche-picker{ display:grid; grid-template-columns: repeat(3,1fr); gap:12px; }
+@media (max-width:520px){ .niche-picker{ grid-template-columns:1fr; } }
+.niche-pick{ border:1px solid var(--line); border-radius: var(--radius); padding:20px; text-align:left; transition: all .2s; }
+.niche-pick:hover{ border-color: var(--cyan); }
+.niche-pick.is-selected[data-niche="customer"]{ border-color: var(--cyan); background: var(--cyan-dim); }
+.niche-pick.is-selected[data-niche="seller"]{ border-color: var(--violet); background: var(--violet-dim); }
+.niche-pick.is-selected[data-niche="rider"]{ border-color: var(--amber); background: var(--amber-dim); }
+.niche-pick .ni{ font-size:22px; margin-bottom:10px; }
+.niche-pick .nn{ font-weight:600; font-size:14.5px; margin-bottom:4px; }
+.niche-pick .nd{ font-size:12px; color: var(--text-muted); }
+
+.progress-track{ display:flex; gap:6px; margin: 24px 0 30px; }
+.progress-seg{ flex:1; height:4px; border-radius:2px; background: var(--line); overflow:hidden; }
+.progress-seg::after{ content:''; display:block; height:100%; width:0; background: var(--cyan); transition: width .4s var(--ease); }
+.progress-seg.is-done::after, .progress-seg.is-active::after{ width:100%; }
+
+.form-step{ display:none; }
+.form-step.is-active{ display:block; animation: fadein .4s var(--ease); }
+.form-row{ display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+@media (max-width:520px){ .form-row{ grid-template-columns:1fr; } }
+
+.upload-zone{
+  border:1.5px dashed var(--line); border-radius: var(--radius); padding: 26px; text-align:center;
+  cursor:pointer; transition: border-color .2s, background .2s;
+}
+.upload-zone:hover, .upload-zone.is-dragover{ border-color: var(--cyan); background: var(--cyan-dim); }
+.upload-zone input{ display:none; }
+.upload-preview{ display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
+.preview-thumb{ width:64px; height:64px; border-radius:10px; overflow:hidden; border:1px solid var(--line); position:relative; }
+.preview-thumb img{ width:100%; height:100%; object-fit:cover; }
+.preview-thumb.is-circle{ border-radius:50%; width:84px; height:84px; }
+
+.review-grid{ display:flex; flex-direction:column; gap:0; border:1px solid var(--line); border-radius: var(--radius); overflow:hidden; }
+.review-row{ display:flex; justify-content:space-between; padding:13px 18px; border-bottom:1px solid var(--line); font-size:13.5px; gap:20px; }
+.review-row:last-child{ border-bottom:none; }
+.review-row .rk{ color: var(--text-muted); }
+.review-row .rv{ font-weight:600; text-align:right; }
+
+.modal-nav{ display:flex; gap:12px; margin-top: 28px; }
+
+.id-badge{
+  font-family: var(--font-mono); font-size: 15px; letter-spacing:.06em; font-weight:700;
+  background: var(--surface-2); border:1px solid var(--cyan); color: var(--cyan);
+  border-radius: 10px; padding: 16px 18px; display:flex; align-items:center; justify-content:space-between;
+  gap:14px; word-break:break-all; box-shadow: 0 0 30px -8px var(--cyan-dim);
+}
+.id-badge button{ flex-shrink:0; font-family: var(--font-body); font-size:12px; color: var(--text-muted); border:1px solid var(--line); border-radius:7px; padding:6px 10px; }
+.success-icon{ width:64px; height:64px; border-radius:50%; background: var(--cyan-dim); display:flex; align-items:center; justify-content:center; margin: 0 auto 22px; color: var(--cyan); }
+.success-icon svg{ stroke-dasharray:24; stroke-dashoffset:24; animation: draw .5s .2s var(--ease) forwards; }
+@keyframes draw{ to{ stroke-dashoffset:0; } }
+
+#registration-slip{ background:#0A0C10; color:#E8EDF2; padding:32px; }
+</style>
+</head>
+<body data-theme="dark">
+
+<div id="loader"><div class="loader-mark"></div></div>
+<div class="cursor-dot"></div>
+<div class="cursor-ring"></div>
+<div id="toast-stack"></div>
+
+<!-- ============================================================
+     NAV
+     ============================================================ -->
+<nav class="nav" id="nav">
+  <div class="wrap">
+    <a href="#top" class="brand"><span class="brand-mark"></span>CampusLink</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#about">About</a></li>
+      <li><a href="#marketplace">Marketplace</a></li>
+      <li><a href="#niches">Get started</a></li>
+      <li><a href="#testimonials">Stories</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">🌙</button>
+      <button class="btn btn-primary btn-sm" id="navCta" data-niche="">Join CampusLink</button>
+      <button class="nav-burger" id="navBurger" aria-label="Open menu"><span></span></button>
+    </div>
+  </div>
+</nav>
+
+<!-- Route rail signature -->
+<div class="route-rail" id="routeRail">
+  <svg preserveAspectRatio="none" viewBox="0 0 2 1000">
+    <line class="route-track" x1="1" y1="0" x2="1" y2="1000" stroke-width="2" stroke-dasharray="2 8"/>
+    <line class="route-progress" id="routeProgressLine" x1="1" y1="0" x2="1" y2="0" stroke-width="2"/>
+  </svg>
+</div>
+<div class="route-rider" id="routeRider" style="top:140px;"></div>
+
+<main id="top">
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<section class="hero waypoint" data-stop="0">
+  <div class="waypoint-marker" id="wp0">00</div>
+  <div class="hero-grid"></div>
+  <div class="wrap">
+    <div class="hero-content">
+      <span class="eyebrow">Campus logistics network</span>
+      <h1>The route between<br><span class="accent">every order</span> and<br>every campus door.</h1>
+      <p class="hero-sub">CampusLink connects student customers, verified campus sellers, and student riders on one trusted network — so getting things on campus is as fast as getting them anywhere else.</p>
+      <div class="hero-ctas">
+        <button class="btn btn-primary" data-open-register data-niche="customer">Order on campus</button>
+        <button class="btn btn-ghost" data-open-register data-niche="seller">Sell on CampusLink</button>
+        <button class="btn btn-ghost" data-open-register data-niche="rider">Ride & deliver</button>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="num" data-count="42">0</div><div class="label">Campuses in coverage</div></div>
+        <div class="hero-stat"><div class="num" data-count="3100">0</div><div class="label">Verified sellers</div></div>
+        <div class="hero-stat"><div class="num" data-count="18">0</div><div class="label">Min. avg. delivery</div></div>
+      </div>
+    </div>
+  </div>
+  <svg class="hero-route-preview" viewBox="0 0 400 400" fill="none">
+    <path d="M40 360 C 100 300, 60 200, 160 180 S 280 100, 360 40" stroke="url(#g1)" stroke-width="2" stroke-dasharray="4 8"/>
+    <circle cx="40" cy="360" r="6" fill="#00E5FF"/>
+    <circle cx="160" cy="180" r="6" fill="#8B5CF6"/>
+    <circle cx="360" cy="40" r="6" fill="#FFB020"/>
+    <defs><linearGradient id="g1" x1="0" y1="400" x2="400" y2="0"><stop offset="0" stop-color="#00E5FF"/><stop offset="1" stop-color="#FFB020"/></linearGradient></defs>
+  </svg>
+</section>
+
+<!-- ============================================================
+     ABOUT
+     ============================================================ -->
+<section id="about" class="waypoint" data-stop="1">
+  <div class="waypoint-marker" id="wp1">01</div>
+  <div class="wrap">
+    <div class="about-layout">
+      <div class="about-copy reveal">
+        <span class="eyebrow">About CampusLink</span>
+        <h2 class="section-title">Built for how campuses actually move.</h2>
+        <p>Campus commerce already happens — in hostel WhatsApp groups, gate-side stalls, and bike riders who know every shortcut. CampusLink doesn't replace that energy; it gives it infrastructure.</p>
+        <p>One platform lets a student order from a verified seller down the road, track who's bringing it, and have it land at their hostel gate — handled by a fellow student who knows the campus better than any outside courier ever could.</p>
+        <p>It's commerce and logistics, scoped to a world that's dense, fast-moving, and currently underserved by every general delivery app built for cities, not campuses.</p>
+      </div>
+      <div class="about-visual reveal">
+        <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=1000&auto=format&fit=crop" alt="Students on a university campus walkway" loading="lazy">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     PROBLEMS
+     ============================================================ -->
+<section id="problems" class="waypoint" data-stop="2">
+  <div class="waypoint-marker" id="wp2">02</div>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">The problem</span>
+        <h2 class="section-title">Campus commerce runs on goodwill, not infrastructure.</h2>
+      </div>
+      <p class="section-lead">Four gaps show up again and again when commerce has to route through general-purpose apps that were never built for hostel blocks and lecture-hall foot traffic.</p>
+    </div>
+    <div class="grid-4">
+      <div class="card reveal">
+        <div class="card-icon">⏱</div>
+        <h4>Slow, generic delivery</h4>
+        <p>City-wide delivery apps route through addresses that don't match how campuses are actually laid out — hostels, faculties, gates.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon">🛡</div>
+        <h4>Unverified sellers</h4>
+        <p>No reliable way to know who's actually behind a stall or a DM-based shop until money has already changed hands.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon">💳</div>
+        <h4>Payment trust gaps</h4>
+        <p>Pay-before-you-see-it arrangements over chat leave both buyers and sellers exposed, with no record to fall back on.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon">🧩</div>
+        <h4>Fragmented WhatsApp commerce</h4>
+        <p>Every seller has their own group, their own process — there's no single place to discover what's actually available nearby.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     MISSION / VISION / VALUES
+     ============================================================ -->
+<section id="values" class="waypoint" data-stop="3">
+  <div class="waypoint-marker" id="wp3">03</div>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">What drives us</span>
+        <h2 class="section-title">Mission, vision, and the principles that don't move.</h2>
+      </div>
+    </div>
+    <div class="grid-4">
+      <div class="card value-card reveal">
+        <span class="card-tag">MISSION</span>
+        <h4>Make campus commerce instant.</h4>
+        <p>Give every student, seller, and rider a faster, more trustworthy way to move goods around campus life.</p>
+      </div>
+      <div class="card value-card reveal">
+        <span class="card-tag">VISION</span>
+        <h4>A connected campus, by default.</h4>
+        <p>Every Nigerian campus running on shared logistics infrastructure, not isolated chat groups and guesswork.</p>
+      </div>
+      <div class="card value-card reveal">
+        <span class="card-tag">MOTTO</span>
+        <h4>"Closer than you think."</h4>
+        <p>The seller, the rider, the order — always nearer than the apps built for the whole city make them feel.</p>
+      </div>
+      <div class="card value-card reveal">
+        <span class="card-tag">VALUES</span>
+        <h4>Verified. Local. Fast.</h4>
+        <p>Every account checked, every route campus-native, every delivery measured in minutes, not hours.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     MARKETPLACE
+     ============================================================ -->
+<section id="marketplace" class="waypoint" data-stop="4">
+  <div class="waypoint-marker" id="wp4">04</div>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">How it works</span>
+        <h2 class="section-title">From browse to doorstep, four stops.</h2>
+      </div>
+      <p class="section-lead">The same route, every time — which is exactly why it can be fast.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal"><span class="step-num">01 — Browse</span><h4>Find what's nearby</h4><p>Search verified sellers and listings filtered to your campus and hostel zone.</p></div>
+      <div class="step reveal"><span class="step-num">02 — Order</span><h4>Checkout in seconds</h4><p>Confirm your order and drop your delivery pin — no typed addresses needed.</p></div>
+      <div class="step reveal"><span class="step-num">03 — Rider en route</span><h4>Track the handoff</h4><p>A verified student rider picks up and heads your way on the shortest campus route.</p></div>
+      <div class="step reveal"><span class="step-num">04 — Delivered</span><h4>Rate & repeat</h4><p>Confirm receipt, rate the experience, and the next order is one tap away.</p></div>
+    </div>
+
+    <div class="marketplace-preview reveal">
+      <div class="mp-cats">
+        <div class="mp-cat is-active">All categories</div>
+        <div class="mp-cat">Food & snacks</div>
+        <div class="mp-cat">Provisions</div>
+        <div class="mp-cat">Fashion</div>
+        <div class="mp-cat">Print & stationery</div>
+        <div class="mp-cat">Errands</div>
+      </div>
+      <div>
+        <div class="mp-search">🔍 Search sellers near Hostel Block C…</div>
+        <div class="mp-products">
+          <div class="mp-product"><img src="https://images.unsplash.com/photo-1606756790138-261d2b21cd75?q=80&w=400&auto=format&fit=crop" alt="Packaged jollof rice meal" loading="lazy"><div class="pi"><div class="pn">Jollof + chicken combo</div><div class="pp">₦2,500</div></div></div>
+          <div class="mp-product"><img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=400&auto=format&fit=crop" alt="Stack of notebooks and stationery" loading="lazy"><div class="pi"><div class="pn">A4 print bundle (50pg)</div><div class="pp">₦750</div></div></div>
+          <div class="mp-product"><img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=400&auto=format&fit=crop" alt="Folded clothing items" loading="lazy"><div class="pi"><div class="pn">Campus hoodie — navy</div><div class="pp">₦8,200</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     NICHES — Customer / Seller / Rider
+     ============================================================ -->
+<section id="niches" class="niche-section waypoint" data-stop="5">
+  <div class="waypoint-marker" id="wp5">05</div>
+  <div class="wrap">
+    <div class="section-head reveal" style="margin-bottom:0;">
+      <div>
+        <span class="eyebrow">Three roles, one network</span>
+        <h2 class="section-title">Find your place on CampusLink.</h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="niche-block" data-niche="customer">
+      <div class="reveal">
+        <span class="niche-tag">For customers</span>
+        <h3>Order like the seller is two doors down — because they usually are.</h3>
+        <p>Browse verified sellers near your hostel, pay with confidence, and track a rider who actually knows the fastest route through campus.</p>
+        <ul class="niche-list">
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Verified sellers only, with ratings you can trust</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Pin-drop delivery — no typed addresses</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Average delivery under 20 minutes on-campus</li>
+        </ul>
+        <button class="btn" data-niche="customer" data-open-register>Register as Customer</button>
+      </div>
+      <div class="niche-visual reveal"><img src="https://images.unsplash.com/photo-1607082349566-187342175e2f?q=80&w=900&auto=format&fit=crop" alt="Student checking a phone outside a hostel" loading="lazy"></div>
+    </div>
+
+    <div class="niche-block reverse" data-niche="seller">
+      <div class="niche-visual reveal"><img src="https://images.unsplash.com/photo-1556740758-90de374c12ad?q=80&w=900&auto=format&fit=crop" alt="Small business owner arranging products on a stall" loading="lazy"></div>
+      <div class="reveal">
+        <span class="niche-tag">For sellers</span>
+        <h3>Turn your stall, shop, or side-hustle into a campus-wide storefront.</h3>
+        <p>List your products with a real gallery, get discovered by students searching your campus, and let CampusLink riders handle the last mile.</p>
+        <ul class="niche-list">
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Full product gallery with multi-image listings</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Pinned stall location for accurate pickup</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Verification badge that builds buyer trust fast</li>
+        </ul>
+        <button class="btn" data-niche="seller" data-open-register>Register as Seller</button>
+      </div>
+    </div>
+
+    <div class="niche-block" data-niche="rider">
+      <div class="reveal">
+        <span class="niche-tag">For riders</span>
+        <h3>Earn on the campus you already know better than any map.</h3>
+        <p>Set your coverage zone, pick up nearby orders, and get paid for routes you could ride with your eyes closed.</p>
+        <ul class="niche-list">
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Flexible hours around lectures</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Custom coverage zone, drawn on a real map</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Verified-rider badge for safer pickups</li>
+        </ul>
+        <button class="btn" data-niche="rider" data-open-register>Register as Rider</button>
+      </div>
+      <div class="niche-visual reveal"><img src="https://images.unsplash.com/photo-1591741535018-d042766c62eb?q=80&w=900&auto=format&fit=crop" alt="Delivery rider with a bike on a campus path" loading="lazy"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     COVERAGE MAP TEASER
+     ============================================================ -->
+<section id="coverage" class="waypoint" data-stop="6">
+  <div class="waypoint-marker" id="wp6">06</div>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">Live coverage</span>
+        <h2 class="section-title">Already routing across campus zones in Port Harcourt.</h2>
+      </div>
+      <p class="section-lead">Every pin is a real coverage zone — sellers, riders, and delivery radii mapped to how students actually move.</p>
+    </div>
+    <div class="map-embed reveal">
+      <iframe loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+        src="https://www.google.com/maps?q=Port+Harcourt,+Rivers+State,+Nigeria&output=embed"
+        title="CampusLink coverage map — Port Harcourt"></iframe>
+    </div>
+    <!-- PRODUCTION NOTE: swap this static iframe embed for the Google Maps JavaScript API
+         (Places + Drawing libraries) to enable live pins, address autocomplete, and
+         rider-zone drawing as specified in Module 3 of the build spec. Requires a
+         billed Google Cloud Maps API key restricted by HTTP referrer. -->
+  </div>
+</section>
+
+<!-- ============================================================
+     TESTIMONIALS
+     ============================================================ -->
+<section id="testimonials" class="waypoint" data-stop="7">
+  <div class="waypoint-marker" id="wp7">07</div>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div><span class="eyebrow">From the network</span><h2 class="section-title">What campus already sounds like.</h2></div>
+    </div>
+    <div class="testi-track reveal">
+      <div class="testi-slide is-active">
+        <p class="testi-quote">"I used to wait an hour for food I could see from my window. Now it's twenty minutes, tracked the whole way."</p>
+        <div class="testi-person"><div class="testi-avatar"></div><div><div class="testi-name">Chiamaka U.</div><div class="testi-role">Customer · Customer-CPL</div></div></div>
+      </div>
+      <div class="testi-slide">
+        <p class="testi-quote">"My stall used to only reach the students who walked past it. Now half my orders come from hostels I've never even visited."</p>
+        <div class="testi-person"><div class="testi-avatar"></div><div><div class="testi-name">Emeka O.</div><div class="testi-role">Seller · Provisions stall</div></div></div>
+      </div>
+      <div class="testi-slide">
+        <p class="testi-quote">"I ride between lectures now. The zone tool means I only get orders on routes I'm already taking."</p>
+        <div class="testi-person"><div class="testi-avatar"></div><div><div class="testi-name">Tariere B.</div><div class="testi-role">Rider · Verified since 2025</div></div></div>
+      </div>
+    </div>
+    <div class="testi-dots">
+      <span class="testi-dot is-active" data-slide="0"></span>
+      <span class="testi-dot" data-slide="1"></span>
+      <span class="testi-dot" data-slide="2"></span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FAQ
+     ============================================================ -->
+<section id="faq" class="waypoint" data-stop="8">
+  <div class="waypoint-marker" id="wp8">08</div>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div><span class="eyebrow">Questions</span><h2 class="section-title">Before you register.</h2></div>
+    </div>
+    <div class="faq-list reveal">
+      <div class="faq-item is-open">
+        <button class="faq-q"><span>How does registration actually work?</span><span class="plus"></span></button>
+        <div class="faq-a"><p>Pick a role — Customer, Seller, or Rider — fill a short multi-step form, upload your photo (and product gallery, if you're a seller), and review before submitting. You'll get a unique registration ID and a downloadable confirmation slip instantly.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>How are riders verified?</span><span class="plus"></span></button>
+        <div class="faq-a"><p>Every rider submits an ID upload and vehicle details during registration. Verified status unlocks once those are reviewed, and shows as a badge on their profile.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>How do sellers get listed in the marketplace?</span><span class="plus"></span></button>
+        <div class="faq-a"><p>After registering with a product gallery and pinned stall location, sellers appear in marketplace search results filtered to their campus zone, ranked by proximity and rating.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>Is my registration data saved if I close the page?</span><span class="plus"></span></button>
+        <div class="faq-a"><p>Yes — your progress saves automatically as you go, so you can pick up exactly where you left off if you return before submitting.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>What if registration isn't processed instantly?</span><span class="plus"></span></button>
+        <div class="faq-a"><p>While our live backend is rolling out, every submission also generates a pre-filled email to our onboarding team as a manual fallback, so nothing gets lost.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     CONTACT
+     ============================================================ -->
+<section id="contact" class="waypoint" data-stop="9">
+  <div class="waypoint-marker" id="wp9">09</div>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div><span class="eyebrow">Get in touch</span><h2 class="section-title">Questions, partnerships, campus rollouts.</h2></div>
+    </div>
+    <div class="contact-layout">
+      <form class="reveal" id="contactForm" novalidate>
+        <div class="field">
+          <label for="cName">Full name</label>
+          <input type="text" id="cName" name="name" required>
+          <div class="field-error">Please enter your name.</div>
+        </div>
+        <div class="field">
+          <label for="cEmail">Email address</label>
+          <input type="email" id="cEmail" name="email" required>
+          <div class="field-error">Please enter a valid email.</div>
+        </div>
+        <div class="field">
+          <label for="cMsg">Message</label>
+          <textarea id="cMsg" name="message" rows="5" required></textarea>
+          <div class="field-error">Tell us a little about what you need.</div>
+        </div>
+        <button class="btn btn-primary btn-block" type="submit">Send message</button>
+        <div class="whatsapp-cta">
+          <div class="wa-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.6 1.4 5.2L2 22l4.9-1.3C8.4 21.5 10.1 22 12 22c5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg></div>
+          <div><div style="font-weight:600; font-size:14px;">Prefer WhatsApp?</div><div style="font-size:13px; color:var(--text-muted);">Chat with us directly for a faster response.</div></div>
+        </div>
+      </form>
+      <div class="reveal">
+        <div class="map-embed">
+          <iframe loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps?q=Port+Harcourt,+Rivers+State,+Nigeria&output=embed"
+            title="CampusLink office location"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer>
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-col">
+        <div class="brand" style="margin-bottom:14px;"><span class="brand-mark"></span>CampusLink</div>
+        <p style="color:var(--text-muted); font-size:14px; max-width:260px;">The logistics layer for campus life — built by P.KAY Digital Enterprise Ltd.</p>
+        <div class="newsletter">
+          <input type="email" placeholder="Your email" id="newsletterEmail" aria-label="Newsletter email">
+          <button class="btn btn-primary btn-sm" id="newsletterBtn">Join</button>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Platform</h5>
+        <ul><li><a href="#marketplace">Marketplace</a></li><li><a href="#niches">Customers</a></li><li><a href="#niches">Sellers</a></li><li><a href="#niches">Riders</a></li></ul>
+      </div>
+      <div class="footer-col">
+        <h5>Company</h5>
+        <ul><li><a href="#about">About</a></li><li><a href="#testimonials">Stories</a></li><li><a href="#faq">FAQ</a></li><li><a href="#contact">Contact</a></li></ul>
+      </div>
+      <div class="footer-col">
+        <h5>Legal</h5>
+        <ul><li><a href="#">Privacy policy</a></li><li><a href="#">Terms of service</a></li><li><a href="#">Rider agreement</a></li></ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 CampusLink — P.KAY Digital Enterprise Ltd. All rights reserved.</span>
+      <div class="footer-socials">
+        <a href="#" aria-label="Instagram">📷</a>
+        <a href="#" aria-label="X / Twitter">𝕏</a>
+        <a href="#" aria-label="WhatsApp">💬</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================================================
+     REGISTRATION MODAL
+     ============================================================ -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-head">
+      <h3 id="modalTitle" style="font-size:18px;">Join CampusLink</h3>
+      <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <div class="progress-track" id="progressTrack">
+        <div class="progress-seg is-active"></div>
+        <div class="progress-seg"></div>
+        <div class="progress-seg"></div>
+        <div class="progress-seg"></div>
+        <div class="progress-seg"></div>
+      </div>
+
+      <!-- STEP 0: niche picker -->
+      <div class="form-step is-active" data-step="0">
+        <p style="color:var(--text-muted); font-size:14px; margin-bottom:18px;">Choose how you want to use CampusLink.</p>
+        <div class="niche-picker">
+          <button type="button" class="niche-pick" data-niche="customer"><div class="ni">🛍️</div><div class="nn">Customer</div><div class="nd">Order from campus sellers</div></button>
+          <button type="button" class="niche-pick" data-niche="seller"><div class="ni">🏪</div><div class="nn">Seller</div><div class="nd">List products & get discovered</div></button>
+          <button type="button" class="niche-pick" data-niche="rider"><div class="ni">🛵</div><div class="nn">Rider</div><div class="nd">Earn delivering on campus</div></button>
+        </div>
+        <div class="modal-nav"><button class="btn btn-primary btn-block" id="step0Next" disabled>Continue</button></div>
+      </div>
+
+      <!-- STEP 1: basic info -->
+      <div class="form-step" data-step="1">
+        <div class="form-row">
+          <div class="field"><label for="rSurname">Surname</label><input type="text" id="rSurname" required></div>
+          <div class="field"><label for="rFirstname">First name</label><input type="text" id="rFirstname" required></div>
+        </div>
+        <div class="form-row">
+          <div class="field"><label for="rEmail">Email address</label><input type="email" id="rEmail" required></div>
+          <div class="field"><label for="rPhone">Phone number</label><input type="tel" id="rPhone" required></div>
+        </div>
+        <div class="field"><label for="rCampus">Campus / institution</label><input type="text" id="rCampus" placeholder="e.g. Rivers State University" required></div>
+        <div class="field" id="addressField"><label for="rAddress">Delivery address / hostel</label><input type="text" id="rAddress" placeholder="Start typing your hostel or street address…"></div>
+        <p style="font-size:12px; color:var(--text-muted); margin-top:-8px;">📍 In production this field uses Google Places Autocomplete, scoped to your campus, with a draggable map pin for exact location.</p>
+        <div class="modal-nav"><button class="btn btn-ghost" data-prev>Back</button><button class="btn btn-primary btn-block" id="step1Next">Continue</button></div>
+      </div>
+
+      <!-- STEP 2: niche-specific + uploads -->
+      <div class="form-step" data-step="2">
+        <div id="nicheSpecificFields"></div>
+
+        <div class="field">
+          <label>Passport photograph</label>
+          <div class="upload-zone" id="passportZone">
+            <input type="file" id="passportInput" accept="image/*">
+            <div>📷 Click or drag a photo here</div>
+            <div class="upload-preview" id="passportPreview"></div>
+          </div>
+        </div>
+
+        <div class="field" id="galleryField" style="display:none;">
+          <label>Product gallery (sellers)</label>
+          <div class="upload-zone" id="galleryZone">
+            <input type="file" id="galleryInput" accept="image/*" multiple>
+            <div>🖼️ Click or drag product photos here (multiple allowed)</div>
+            <div class="upload-preview" id="galleryPreview"></div>
+          </div>
+        </div>
+
+        <div class="modal-nav"><button class="btn btn-ghost" data-prev>Back</button><button class="btn btn-primary btn-block" id="step2Next">Continue</button></div>
+      </div>
+
+      <!-- STEP 3: review -->
+      <div class="form-step" data-step="3">
+        <p style="color:var(--text-muted); font-size:14px; margin-bottom:18px;">Review your details before submitting.</p>
+        <div class="review-grid" id="reviewGrid"></div>
+        <div class="modal-nav"><button class="btn btn-ghost" data-prev>Back</button><button class="btn btn-primary btn-block" id="submitRegistration">Submit registration</button></div>
+      </div>
+
+      <!-- STEP 4: success -->
+      <div class="form-step" data-step="4">
+        <div class="success-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <h3 style="text-align:center; margin-bottom:8px;">You're registered!</h3>
+        <p style="text-align:center; color:var(--text-muted); font-size:14px; margin-bottom:24px;">Your CampusLink ID has been generated. Keep it — you'll use it to check in.</p>
+        <div class="id-badge"><span id="generatedId">—</span><button id="copyIdBtn" type="button">Copy</button></div>
+        <div class="modal-nav" style="flex-direction:column;">
+          <button class="btn btn-primary btn-block" id="downloadSlipBtn">Download registration slip (PDF)</button>
+          <button class="btn btn-ghost btn-block" id="emailFallbackBtn">Email us this registration instead</button>
+          <button class="btn btn-ghost btn-block" id="closeSuccessBtn">Done</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Hidden printable slip used for PDF export -->
+<div id="registration-slip" style="position:fixed; left:-9999px; top:0; width:520px;">
+  <div style="display:flex; align-items:center; gap:10px; margin-bottom:24px;">
+    <div style="width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#00E5FF,#8B5CF6);"></div>
+    <div style="font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:20px;">CampusLink</div>
+  </div>
+  <div style="font-size:13px; color:#8A93A3; margin-bottom:18px;">Registration confirmation slip</div>
+  <div id="slipPhoto" style="width:90px;height:90px;border-radius:50%;background:#181C24; margin-bottom:18px; overflow:hidden;"></div>
+  <div id="slipDetails" style="font-size:13px; line-height:2;"></div>
+  <div style="margin-top:20px; font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:700; color:#00E5FF; border:1px solid #00E5FF; border-radius:10px; padding:14px;" id="slipId"></div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ============================================================
+   LOADER
+   ============================================================ */
+window.addEventListener('load', ()=>{
+  setTimeout(()=> document.getElementById('loader').classList.add('is-hidden'), 350);
+});
+setTimeout(()=> document.getElementById('loader').classList.add('is-hidden'), 2500);
+
+/* ============================================================
+   TOASTS
+   ============================================================ */
+function toast(msg){
+  const stack = document.getElementById('toast-stack');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = msg;
+  stack.appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transform='translateX(20px)'; el.style.transition='all .3s'; setTimeout(()=>el.remove(),300); }, 3200);
+}
+
+/* ============================================================
+   THEME TOGGLE
+   ============================================================ */
+const themeToggle = document.getElementById('themeToggle');
+const savedTheme = localStorage.getItem('cl_theme');
+if(savedTheme){ document.body.setAttribute('data-theme', savedTheme); themeToggle.textContent = savedTheme==='light' ? '☀️' : '🌙'; }
+themeToggle.addEventListener('click', ()=>{
+  const cur = document.body.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('cl_theme', next);
+  themeToggle.textContent = next==='light' ? '☀️' : '🌙';
+});
+
+/* ============================================================
+   NAV SCROLL STATE + MOBILE MENU
+   ============================================================ */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', ()=> nav.classList.toggle('scrolled', window.scrollY > 40), {passive:true});
+const navBurger = document.getElementById('navBurger');
+const navLinks = document.getElementById('navLinks');
+navBurger.addEventListener('click', ()=>{
+  const open = navLinks.style.display === 'flex';
+  navLinks.style.cssText = open ? '' : 'display:flex; position:absolute; top:64px; left:20px; right:20px; flex-direction:column; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:20px; gap:16px;';
+});
+
+/* ============================================================
+   CUSTOM CURSOR
+   ============================================================ */
+const cDot = document.querySelector('.cursor-dot');
+const cRing = document.querySelector('.cursor-ring');
+window.addEventListener('mousemove', e=>{
+  cDot.style.left = e.clientX+'px'; cDot.style.top = e.clientY+'px';
+  cRing.style.left = e.clientX+'px'; cRing.style.top = e.clientY+'px';
+});
+document.querySelectorAll('a, button, .card, .niche-pick').forEach(el=>{
+  el.addEventListener('mouseenter', ()=> cRing.classList.add('is-active'));
+  el.addEventListener('mouseleave', ()=> cRing.classList.remove('is-active'));
+});
+
+/* ============================================================
+   SCROLL REVEAL
+   ============================================================ */
+const revealObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('is-visible'); revealObserver.unobserve(en.target); } });
+}, { threshold:0.15 });
+document.querySelectorAll('.reveal').forEach(el=> revealObserver.observe(el));
+
+/* ============================================================
+   ROUTE RAIL (signature scroll element)
+   ============================================================ */
+const routeRail = document.getElementById('routeRail');
+const routeRider = document.getElementById('routeRider');
+const progressLine = document.getElementById('routeProgressLine');
+const waypoints = Array.from(document.querySelectorAll('.waypoint'));
+
+function updateRoute(){
+  const railRect = routeRail.getBoundingClientRect();
+  const railHeight = routeRail.offsetHeight;
+  const scrollableHeight = document.body.scrollHeight - window.innerHeight;
+  const progress = Math.min(1, Math.max(0, window.scrollY / scrollableHeight));
+  routeRider.style.top = (progress * railHeight) + 'px';
+  progressLine.setAttribute('y2', progress * 1000);
+
+  waypoints.forEach(wp=>{
+    const r = wp.getBoundingClientRect();
+    const marker = document.getElementById('wp'+wp.dataset.stop);
+    if(!marker) return;
+    const inView = r.top < window.innerHeight*0.5 && r.bottom > window.innerHeight*0.5;
+    marker.classList.toggle('is-active', inView);
+  });
+}
+window.addEventListener('scroll', ()=> requestAnimationFrame(updateRoute), {passive:true});
+updateRoute();
+
+/* ============================================================
+   COUNT-UP STATS
+   ============================================================ */
+const statEls = document.querySelectorAll('[data-count]');
+const statObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(en=>{
+    if(!en.isIntersecting) return;
+    const el = en.target;
+    const target = parseInt(el.dataset.count,10);
+    let cur = 0;
+    const step = Math.max(1, Math.ceil(target/60));
+    const tick = ()=>{
+      cur += step;
+      if(cur >= target){ el.textContent = target.toLocaleString(); return; }
+      el.textContent = cur.toLocaleString();
+      requestAnimationFrame(tick);
+    };
+    tick();
+    statObserver.unobserve(el);
+  });
+}, {threshold:0.5});
+statEls.forEach(el=> statObserver.observe(el));
+
+/* ============================================================
+   TESTIMONIAL CAROUSEL
+   ============================================================ */
+const slides = document.querySelectorAll('.testi-slide');
+const dots = document.querySelectorAll('.testi-dot');
+let testiIndex = 0;
+function showSlide(i){
+  slides.forEach((s,idx)=> s.classList.toggle('is-active', idx===i));
+  dots.forEach((d,idx)=> d.classList.toggle('is-active', idx===i));
+  testiIndex = i;
+}
+dots.forEach(d=> d.addEventListener('click', ()=> showSlide(parseInt(d.dataset.slide,10))));
+let testiTimer = setInterval(()=> showSlide((testiIndex+1)%slides.length), 5000);
+
+/* ============================================================
+   FAQ ACCORDION
+   ============================================================ */
+document.querySelectorAll('.faq-item').forEach(item=>{
+  const q = item.querySelector('.faq-q');
+  const a = item.querySelector('.faq-a');
+  if(item.classList.contains('is-open')) a.style.maxHeight = a.scrollHeight+'px';
+  q.addEventListener('click', ()=>{
+    const isOpen = item.classList.contains('is-open');
+    document.querySelectorAll('.faq-item').forEach(i=>{ i.classList.remove('is-open'); i.querySelector('.faq-a').style.maxHeight = 0; });
+    if(!isOpen){ item.classList.add('is-open'); a.style.maxHeight = a.scrollHeight+'px'; }
+  });
+});
+
+/* ============================================================
+   MARKETPLACE CATEGORY CHIPS (visual only)
+   ============================================================ */
+document.querySelectorAll('.mp-cat').forEach(cat=>{
+  cat.addEventListener('click', ()=>{
+    document.querySelectorAll('.mp-cat').forEach(c=> c.classList.remove('is-active'));
+    cat.classList.add('is-active');
+  });
+});
+
+/* ============================================================
+   CONTACT FORM VALIDATION + mailto fallback
+   ============================================================ */
+const contactForm = document.getElementById('contactForm');
+contactForm.addEventListener('submit', (e)=>{
+  e.preventDefault();
+  let valid = true;
+  ['cName','cEmail','cMsg'].forEach(id=>{
+    const input = document.getElementById(id);
+    const field = input.closest('.field');
+    const ok = id==='cEmail' ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value) : input.value.trim().length>0;
+    field.classList.toggle('has-error', !ok);
+    if(!ok) valid = false;
+  });
+  if(!valid) return;
+  const name = document.getElementById('cName').value;
+  const email = document.getElementById('cEmail').value;
+  const msg = document.getElementById('cMsg').value;
+  const subject = encodeURIComponent('CampusLink contact — '+name);
+  const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${msg}`);
+  window.location.href = `mailto:hello@campuslink.app?subject=${subject}&body=${body}`;
+  toast('Opening your email client to send this message…');
+});
+
+document.getElementById('newsletterBtn').addEventListener('click', ()=>{
+  const val = document.getElementById('newsletterEmail').value;
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)){ toast('Enter a valid email to subscribe.'); return; }
+  const subs = JSON.parse(localStorage.getItem('cl_newsletter')||'[]');
+  subs.push(val); localStorage.setItem('cl_newsletter', JSON.stringify(subs));
+  document.getElementById('newsletterEmail').value='';
+  toast('Subscribed — welcome to CampusLink updates.');
+});
+
+/* ============================================================
+   REGISTRATION ID GENERATOR
+   Format: {SURNAME}{FIRSTNAME}-{HH}{SS}-{NICHE}-CPL
+   ============================================================ */
+function generateRegistrationId(surname, firstName, niche){
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2,'0');
+  const ss = String(now.getSeconds()).padStart(2,'0');
+  const nicheCodes = { customer:'CUST', seller:'SELL', rider:'RIDR' };
+  const cleanSurname = (surname||'').trim().toUpperCase().replace(/[^A-Z]/g,'');
+  const cleanFirst = (firstName||'').trim().toUpperCase().replace(/[^A-Z]/g,'');
+  const nicheCode = nicheCodes[niche] || 'GEN';
+  return `${cleanSurname}${cleanFirst}-${hh}${ss}-${nicheCode}-CPL`;
+}
+
+/* ============================================================
+   REGISTRATION MODAL LOGIC
+   ============================================================ */
+const overlay = document.getElementById('modalOverlay');
+const modalTitle = document.getElementById('modalTitle');
+const steps = document.querySelectorAll('.form-step');
+const segs = document.querySelectorAll('.progress-seg');
+let currentStep = 0;
+let selectedNiche = null;
+let uploadedPassport = null;
+let uploadedGallery = [];
+let lastGeneratedId = null;
+
+const DRAFT_KEY = 'cl_registration_draft';
+
+function openModal(niche){
+  overlay.classList.add('is-open');
+  document.body.style.overflow = 'hidden';
+  if(niche){ selectNiche(niche); goToStep(1); }
+  loadDraft();
+}
+function closeModal(){
+  overlay.classList.remove('is-open');
+  document.body.style.overflow = '';
+}
+document.getElementById('modalClose').addEventListener('click', closeModal);
+overlay.addEventListener('click', (e)=>{ if(e.target===overlay) closeModal(); });
+document.querySelectorAll('[data-open-register]').forEach(btn=>{
+  btn.addEventListener('click', ()=> openModal(btn.dataset.niche || null));
+});
+document.getElementById('navCta').addEventListener('click', ()=> openModal(null));
+
+function goToStep(n){
+  steps.forEach(s=> s.classList.toggle('is-active', parseInt(s.dataset.step,10)===n));
+  segs.forEach((s,idx)=>{ s.classList.toggle('is-done', idx<n); s.classList.toggle('is-active', idx===n); });
+  currentStep = n;
+  if(n===2) renderNicheFields();
+  if(n===3) renderReview();
+}
+
+function selectNiche(n){
+  selectedNiche = n;
+  document.querySelectorAll('.niche-pick').forEach(p=> p.classList.toggle('is-selected', p.dataset.niche===n));
+  document.getElementById('step0Next').disabled = false;
+  modalTitle.textContent = 'Join CampusLink — ' + n.charAt(0).toUpperCase()+n.slice(1);
+}
+document.querySelectorAll('.niche-pick').forEach(p=> p.addEventListener('click', ()=> selectNiche(p.dataset.niche)));
+document.getElementById('step0Next').addEventListener('click', ()=>{ if(selectedNiche) goToStep(1); });
+
+document.querySelectorAll('[data-prev]').forEach(btn=> btn.addEventListener('click', ()=> goToStep(Math.max(0,currentStep-1))));
+
+document.getElementById('step1Next').addEventListener('click', ()=>{
+  const required = ['rSurname','rFirstname','rEmail','rPhone','rCampus'];
+  let valid = true;
+  required.forEach(id=>{ const el = document.getElementById(id); if(!el.value.trim()){ el.style.borderColor='#FF6B6B'; valid=false; } else { el.style.borderColor=''; } });
+  const emailEl = document.getElementById('rEmail');
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value)){ emailEl.style.borderColor='#FF6B6B'; valid=false; }
+  if(!valid){ toast('Please fill all required fields correctly.'); return; }
+  saveDraft();
+  goToStep(2);
+});
+
+function renderNicheFields(){
+  const container = document.getElementById('nicheSpecificFields');
+  const galleryField = document.getElementById('galleryField');
+  galleryField.style.display = selectedNiche === 'seller' ? 'block' : 'none';
+
+  let html = '';
+  if(selectedNiche === 'customer'){
+    html = `<div class="field"><label for="custZone">Preferred delivery zone</label><input type="text" id="custZone" placeholder="e.g. Hostel Block C, Gate 2"></div>`;
+  } else if(selectedNiche === 'seller'){
+    html = `<div class="form-row">
+      <div class="field"><label for="sellBiz">Business / stall name</label><input type="text" id="sellBiz"></div>
+      <div class="field"><label for="sellCat">Category</label>
+        <select id="sellCat"><option>Food & snacks</option><option>Provisions</option><option>Fashion</option><option>Print & stationery</option><option>Errands</option></select>
+      </div>
+    </div>
+    <div class="field"><label for="sellLoc">Stall location on campus</label><input type="text" id="sellLoc" placeholder="Drop a pin in production — described here for now"></div>`;
+  } else if(selectedNiche === 'rider'){
+    html = `<div class="form-row">
+      <div class="field"><label for="ridVehicle">Vehicle type</label><select id="ridVehicle"><option>Bicycle</option><option>Motorcycle</option><option>On foot</option></select></div>
+      <div class="field"><label for="ridZone">Coverage radius (campus zone)</label><input type="text" id="ridZone" placeholder="e.g. Main gate – Block D, 1.5km radius"></div>
+    </div>`;
+  }
+  container.innerHTML = html;
+}
+
+/* Upload handlers — passport (single, circular preview) */
+const passportZone = document.getElementById('passportZone');
+const passportInput = document.getElementById('passportInput');
+const passportPreview = document.getElementById('passportPreview');
+passportZone.addEventListener('click', ()=> passportInput.click());
+['dragover','dragleave','drop'].forEach(evt=>{
+  passportZone.addEventListener(evt, e=>{
+    e.preventDefault();
+    passportZone.classList.toggle('is-dragover', evt==='dragover');
+    if(evt==='drop' && e.dataTransfer.files[0]) handlePassportFile(e.dataTransfer.files[0]);
+  });
+});
+passportInput.addEventListener('change', ()=>{ if(passportInput.files[0]) handlePassportFile(passportInput.files[0]); });
+function handlePassportFile(file){
+  if(!file.type.startsWith('image/')){ toast('Please upload an image file.'); return; }
+  const reader = new FileReader();
+  reader.onload = e=>{
+    uploadedPassport = e.target.result;
+    passportPreview.innerHTML = `<div class="preview-thumb is-circle"><img src="${e.target.result}" alt="Passport preview"></div>`;
+  };
+  reader.readAsDataURL(file);
+}
+
+/* Upload handlers — product gallery (multi) */
+const galleryZone = document.getElementById('galleryZone');
+const galleryInput = document.getElementById('galleryInput');
+const galleryPreview = document.getElementById('galleryPreview');
+galleryZone.addEventListener('click', ()=> galleryInput.click());
+['dragover','dragleave','drop'].forEach(evt=>{
+  galleryZone.addEventListener(evt, e=>{
+    e.preventDefault();
+    galleryZone.classList.toggle('is-dragover', evt==='dragover');
+    if(evt==='drop') handleGalleryFiles(e.dataTransfer.files);
+  });
+});
+galleryInput.addEventListener('change', ()=> handleGalleryFiles(galleryInput.files));
+function handleGalleryFiles(files){
+  Array.from(files).forEach(file=>{
+    if(!file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = e=>{
+      uploadedGallery.push(e.target.result);
+      const thumb = document.createElement('div');
+      thumb.className = 'preview-thumb';
+      thumb.innerHTML = `<img src="${e.target.result}" alt="Product photo">`;
+      galleryPreview.appendChild(thumb);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+document.getElementById('step2Next').addEventListener('click', ()=>{
+  saveDraft();
+  goToStep(3);
+});
+
+function collectFormData(){
+  const data = {
+    niche: selectedNiche,
+    surname: document.getElementById('rSurname').value,
+    firstname: document.getElementById('rFirstname').value,
+    email: document.getElementById('rEmail').value,
+    phone: document.getElementById('rPhone').value,
+    campus: document.getElementById('rCampus').value,
+    address: document.getElementById('rAddress').value,
+  };
+  if(selectedNiche==='customer'){ data.zone = document.getElementById('custZone')?.value || ''; }
+  if(selectedNiche==='seller'){
+    data.business = document.getElementById('sellBiz')?.value || '';
+    data.category = document.getElementById('sellCat')?.value || '';
+    data.location = document.getElementById('sellLoc')?.value || '';
+  }
+  if(selectedNiche==='rider'){
+    data.vehicle = document.getElementById('ridVehicle')?.value || '';
+    data.zoneRadius = document.getElementById('ridZone')?.value || '';
+  }
+  return data;
+}
+
+function renderReview(){
+  const data = collectFormData();
+  const grid = document.getElementById('reviewGrid');
+  const rows = [
+    ['Role', data.niche ? data.niche.charAt(0).toUpperCase()+data.niche.slice(1) : '—'],
+    ['Name', `${data.firstname} ${data.surname}`],
+    ['Email', data.email],
+    ['Phone', data.phone],
+    ['Campus', data.campus],
+    ['Address', data.address || '—'],
+  ];
+  if(data.zone) rows.push(['Delivery zone', data.zone]);
+  if(data.business) rows.push(['Business name', data.business]);
+  if(data.category) rows.push(['Category', data.category]);
+  if(data.location) rows.push(['Stall location', data.location]);
+  if(data.vehicle) rows.push(['Vehicle', data.vehicle]);
+  if(data.zoneRadius) rows.push(['Coverage zone', data.zoneRadius]);
+  rows.push(['Passport photo', uploadedPassport ? 'Uploaded ✓' : 'Not uploaded']);
+  if(data.niche==='seller') rows.push(['Product gallery', uploadedGallery.length+' photo(s)']);
+
+  grid.innerHTML = rows.map(([k,v])=> `<div class="review-row"><span class="rk">${k}</span><span class="rv">${v||'—'}</span></div>`).join('');
+}
+
+document.getElementById('submitRegistration').addEventListener('click', ()=>{
+  const data = collectFormData();
+  if(!data.surname || !data.firstname){ toast('Missing required details — please go back.'); return; }
+  const id = generateRegistrationId(data.surname, data.firstname, data.niche);
+  lastGeneratedId = id;
+  document.getElementById('generatedId').textContent = id;
+  clearDraft();
+  goToStep(4);
+  toast('Registration successful — ID generated.');
+});
+
+document.getElementById('copyIdBtn').addEventListener('click', ()=>{
+  navigator.clipboard.writeText(lastGeneratedId).then(()=> toast('ID copied to clipboard.'));
+});
+
+document.getElementById('closeSuccessBtn').addEventListener('click', ()=>{
+  closeModal();
+  setTimeout(()=>{ goToStep(0); selectedNiche=null; uploadedPassport=null; uploadedGallery=[];
+    document.querySelectorAll('.niche-pick').forEach(p=>p.classList.remove('is-selected'));
+    document.getElementById('step0Next').disabled = true;
+    document.getElementById('passportPreview').innerHTML='';
+    document.getElementById('galleryPreview').innerHTML='';
+    ['rSurname','rFirstname','rEmail','rPhone','rCampus','rAddress'].forEach(id=>document.getElementById(id).value='');
+  }, 400);
+});
+
+document.getElementById('emailFallbackBtn').addEventListener('click', ()=>{
+  const data = collectFormData();
+  const subject = encodeURIComponent('CampusLink registration — '+lastGeneratedId);
+  const body = encodeURIComponent(
+    `New CampusLink registration\n\nID: ${lastGeneratedId}\nRole: ${data.niche}\nName: ${data.firstname} ${data.surname}\nEmail: ${data.email}\nPhone: ${data.phone}\nCampus: ${data.campus}\nAddress: ${data.address}\n`
+  );
+  window.location.href = `mailto:onboarding@campuslink.app?subject=${subject}&body=${body}`;
+  toast('Opening email client with your registration details…');
+});
+
+/* PDF slip generation */
+document.getElementById('downloadSlipBtn').addEventListener('click', ()=>{
+  const data = collectFormData();
+  document.getElementById('slipPhoto').innerHTML = uploadedPassport ? `<img src="${uploadedPassport}" style="width:100%;height:100%;object-fit:cover;">` : '';
+  document.getElementById('slipDetails').innerHTML = `
+    <div><strong>Name:</strong> ${data.firstname} ${data.surname}</div>
+    <div><strong>Role:</strong> ${data.niche}</div>
+    <div><strong>Email:</strong> ${data.email}</div>
+    <div><strong>Phone:</strong> ${data.phone}</div>
+    <div><strong>Campus:</strong> ${data.campus}</div>
+    <div><strong>Registered:</strong> ${new Date().toLocaleString()}</div>
+  `;
+  document.getElementById('slipId').textContent = lastGeneratedId;
+
+  const slip = document.getElementById('registration-slip');
+  slip.style.left = '0px'; slip.style.position='fixed'; slip.style.top='-9999px';
+  html2canvas(slip, { backgroundColor:'#0A0C10', scale:2 }).then(canvas=>{
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ unit:'px', format:[canvas.width/2, canvas.height/2] });
+    pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, canvas.width/2, canvas.height/2);
+    pdf.save(`CampusLink-${lastGeneratedId}.pdf`);
+    toast('Registration slip downloaded.');
+    slip.style.left = '-9999px';
+  }).catch(()=> toast('Could not generate PDF in this environment — try downloading from a live deployment.'));
+});
+
+/* ============================================================
+   DRAFT AUTOSAVE (localStorage)
+   ============================================================ */
+function saveDraft(){
+  const draft = { niche: selectedNiche, ...Object.fromEntries(
+    ['rSurname','rFirstname','rEmail','rPhone','rCampus','rAddress'].map(id=>[id, document.getElementById(id).value])
+  )};
+  localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+}
+function loadDraft(){
+  const raw = localStorage.getItem(DRAFT_KEY);
+  if(!raw) return;
+  try{
+    const draft = JSON.parse(raw);
+    if(draft.niche){ selectNiche(draft.niche); }
+    ['rSurname','rFirstname','rEmail','rPhone','rCampus','rAddress'].forEach(id=>{
+      if(draft[id]) document.getElementById(id).value = draft[id];
+    });
+    if(draft.niche) toast('Resumed your saved registration draft.');
+  }catch(e){}
+}
+function clearDraft(){ localStorage.removeItem(DRAFT_KEY); }
+
+})();
+</script>
+</body>
+</html>
