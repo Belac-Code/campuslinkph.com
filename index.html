@@ -126,37 +126,161 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 /* ============================================================
    NAV
    ============================================================ */
-.nav{
-  position: fixed; top:0; left:0; right:0; z-index: 500;
-  padding: 22px 0;
-  transition: padding .3s var(--ease), background .3s var(--ease), backdrop-filter .3s var(--ease), border-color .3s var(--ease);
-  border-bottom: 1px solid transparent;
-}
-.nav.scrolled{
-  padding: 14px 0;
-  background: color-mix(in srgb, var(--obsidian) 78%, transparent);
-  backdrop-filter: blur(16px);
-  border-bottom-color: var(--line);
-}
-.nav .wrap{ display:flex; align-items:center; justify-content:space-between; }
-.brand{ display:flex; align-items:center; gap:10px; font-family: var(--font-display); font-weight:700; font-size:19px; }
-.brand-mark{ width:30px; height:30px; border-radius:9px; background: linear-gradient(135deg, var(--cyan), var(--violet)); position:relative; flex-shrink:0; }
-.brand-mark::after{ content:''; position:absolute; inset:8px; border-radius:5px; background: var(--obsidian); }
-.nav-links{ display:flex; align-items:center; gap:34px; }
-.nav-links a{ font-size:14px; color: var(--text-muted); transition: color .2s; }
-.nav-links a:hover{ color: var(--text); }
-.nav-actions{ display:flex; align-items:center; gap:14px; }
-.theme-toggle{
-  width:38px; height:38px; border-radius:50%; border:1px solid var(--line);
-  display:flex; align-items:center; justify-content:center; font-size:16px;
-}
-.nav-burger{ display:none; width:38px; height:38px; border:1px solid var(--line); border-radius:9px; align-items:center; justify-content:center; }
-.nav-burger span, .nav-burger span::before, .nav-burger span::after{
-  content:''; display:block; width:16px; height:2px; background: var(--text); position:relative; transition: all .25s;
-}
-.nav-burger span::before{ position:absolute; top:-5px; }
-.nav-burger span::after{ position:absolute; top:5px; }
+ /* ============================================================
+       DESIGN SYSTEM VARIABLES (Fills missing framework tokens)
+       ============================================================ */
+    :root {
+      --obsidian: #0b0f19;
+      --text: #ffffff;
+      --text-muted: #94a3b8;
+      --line: rgba(255, 255, 255, 0.1);
+      --cyan: #06b6d4;
+      --violet: #8b5cf6;
+      --ease: cubic-bezier(0.4, 0, 0.2, 1);
+      --font-display: system-ui, -apple-system, sans-serif;
+    }
 
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--obsidian);
+      color: var(--text);
+      font-family: var(--font-display);
+      height: 200vh; /* Added to simulate scroll for testing */
+    }
+
+    .wrap {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Fallback styles for button primitives */
+    .btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--cyan), var(--violet));
+      color: white;
+    }
+    .btn-sm {
+      padding: 8px 16px;
+      font-size: 14px;
+    }
+
+    /* ============================================================
+       NAV (Base & Desktop Layouts)
+       ============================================================ */
+    .nav {
+      position: fixed; top:0; left:0; right:0; z-index: 500;
+      padding: 22px 0;
+      transition: padding .3s var(--ease), background .3s var(--ease), backdrop-filter .3s var(--ease), border-color .3s var(--ease);
+      border-bottom: 1px solid transparent;
+    }
+    .nav.scrolled {
+      padding: 14px 0;
+      background: color-mix(in srgb, var(--obsidian) 78%, transparent);
+      backdrop-filter: blur(16px);
+      border-bottom-color: var(--line);
+    }
+    .nav .wrap { display:flex; align-items:center; justify-content:space-between; }
+    .brand { display:flex; align-items:center; gap:10px; font-family: var(--font-display); font-weight:700; font-size:19px; text-decoration: none; color: var(--text); }
+    .brand-mark { width:30px; height:30px; border-radius:9px; background: linear-gradient(135deg, var(--cyan), var(--violet)); position:relative; flex-shrink:0; }
+    .brand-mark::after { content:''; position:absolute; inset:8px; border-radius:5px; background: var(--obsidian); }
+    
+    .nav-links { display:flex; align-items:center; gap:34px; list-style: none; margin: 0; padding: 0; }
+    .nav-links a { font-size:14px; color: var(--text-muted); transition: color .2s; text-decoration: none; }
+    .nav-links a:hover { color: var(--text); }
+    
+    .nav-actions { display:flex; align-items:center; gap:14px; }
+    .theme-toggle {
+      width:38px; height:38px; border-radius:50%; border:1px solid var(--line);
+      display:flex; align-items:center; justify-content:center; font-size:16px;
+      background: transparent; color: inherit; cursor: pointer;
+    }
+    .nav-burger { display:none; width:38px; height:38px; border:1px solid var(--line); border-radius:9px; align-items:center; justify-content:center; background: transparent; cursor: pointer; }
+    .nav-burger span, .nav-burger span::before, .nav-burger span::after {
+      content:''; display:block; width:16px; height:2px; background: var(--text); position:relative; transition: all .25s;
+    }
+    .nav-burger span::before { position:absolute; top:-5px; left: 0; }
+    .nav-burger span::after { position:absolute; top:5px; left: 0; }
+
+    /* ============================================================
+       RESPONSIVE MOBILE BREAKPOINT (768px and down)
+       ============================================================ */
+    @media (max-width: 768px) {
+      .nav-burger {
+        display: flex;
+        z-index: 502; /* Keeps burger on top of the modal backdrop */
+      }
+
+      /* Transform navigation menu link block into a modular lateral drawer */
+      .nav-links {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 280px; 
+        height: 100vh;
+        background: var(--obsidian);
+        border-left: 1px solid var(--line);
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        gap: 28px;
+        padding: 40px;
+        z-index: 501;
+
+        /* Entrance State Transitions */
+        opacity: 0;
+        visibility: hidden;
+        transform: translateX(30px);
+        transition: opacity .3s var(--ease), transform .3s var(--ease), visibility .3s;
+      }
+
+      /* State shift when system acts on '.nav-open' modifier class */
+      .nav.nav-open .nav-links {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(0);
+      }
+
+      .nav-links a {
+        font-size: 20px;
+        width: 100%;
+        display: block;
+      }
+
+      /* Adjust core button scale dynamically */
+      #navCta {
+        padding: 8px 14px;
+        font-size: 13px;
+      }
+      
+      /* Morph standard Burger Icon lines into a clean functional 'X' close token */
+      .nav.nav-open .nav-burger span {
+        background: transparent;
+      }
+      .nav.nav-open .nav-burger span::before {
+        transform: rotate(45deg);
+        top: 0;
+      }
+      .nav.nav-open .nav-burger span::after {
+        transform: rotate(-45deg);
+        top: 0;
+      }
+    }
+
+    /* Safety constraint step targeting tight 400px devices */
+    @media (max-width: 400px) {
+      #navCta {
+        display: none; /* Safely strips down clutter to emphasize UI clarity */
+      }
+    }
 /* ============================================================
    ROUTE LINE — SIGNATURE ELEMENT
    A dotted courier route runs the spine of the page; a rider node
@@ -520,35 +644,37 @@ footer{ border-top:1px solid var(--line); padding: 70px 0 30px; }
 <!-- ============================================================
      NAV
      ============================================================ -->
-<nav class="nav" id="nav">
-  <div class="wrap">
-    <a href="#top" class="brand"><span class="brand-mark"></span>CampusLink</a>
-    <ul class="nav-links" id="navLinks">
-      <li><a href="#about">About</a></li>
-      <li><a href="#marketplace">Marketplace</a></li>
-      <li><a href="#niches">Get started</a></li>
-      <li><a href="#testimonials">Stories</a></li>
-      <li><a href="#faq">FAQ</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
-    <div class="nav-actions">
-      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">🌙</button>
-      <button class="btn btn-primary btn-sm" id="navCta" data-niche="">Join CampusLink</button>
-      <button class="nav-burger" id="navBurger" aria-label="Open menu"><span></span></button>
+ <nav class="nav" id="nav">
+    <div class="wrap">
+      <a href="#top" class="brand"><span class="brand-mark"></span>CampusLink</a>
+      
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#about">About</a></li>
+        <li><a href="#marketplace">Marketplace</a></li>
+        <li><a href="#niches">Get started</a></li>
+        <li><a href="#testimonials">Stories</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      
+      <div class="nav-actions">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">🌙</button>
+        <button class="btn btn-primary btn-sm" id="navCta" data-niche="">Join CampusLink</button>
+        <button class="nav-burger" id="navBurger" aria-label="Open menu"><span></span></button>
+      </div>
     </div>
+  </nav>
+
+  <div class="route-rail" id="routeRail">
+    <svg preserveAspectRatio="none" viewBox="0 0 2 1000">
+      <line class="route-track" x1="1" y1="0" x2="1" y2="1000" stroke-width="2" stroke-dasharray="2 8"/>
+      <line class="route-progress" id="routeProgressLine" x1="1" y1="0" x2="1" y2="0" stroke-width="2"/>
+    </svg>
   </div>
-</nav>
+  <div class="route-rider" id="routeRider" style="top:140px;"></div>
 
-<!-- Route rail signature -->
-<div class="route-rail" id="routeRail">
-  <svg preserveAspectRatio="none" viewBox="0 0 2 1000">
-    <line class="route-track" x1="1" y1="0" x2="1" y2="1000" stroke-width="2" stroke-dasharray="2 8"/>
-    <line class="route-progress" id="routeProgressLine" x1="1" y1="0" x2="1" y2="0" stroke-width="2"/>
-  </svg>
-</div>
-<div class="route-rider" id="routeRider" style="top:140px;"></div>
-
-<main id="top">
+  <main id="top">
+    </main>
 
 <!-- ============================================================
      HERO
@@ -697,27 +823,57 @@ footer{ border-top:1px solid var(--line); padding: 70px 0 30px; }
       <div class="step reveal"><span class="step-num">03 — Rider en route</span><h4>Track the handoff</h4><p>A verified student rider picks up and heads your way on the shortest campus route.</p></div>
       <div class="step reveal"><span class="step-num">04 — Delivered</span><h4>Rate & repeat</h4><p>Confirm receipt, rate the experience, and the next order is one tap away.</p></div>
     </div>
+<br>
+<br>
+<br>
 
-    <div class="marketplace-preview reveal">
-      <div class="mp-cats">
-        <div class="mp-cat is-active">All categories</div>
-        <div class="mp-cat">Food & snacks</div>
-        <div class="mp-cat">Provisions</div>
-        <div class="mp-cat">Fashion</div>
-        <div class="mp-cat">Print & stationery</div>
-        <div class="mp-cat">Errands</div>
+<!-- ============================================================
+    CATEGORIES 
+     ============================================================ -->
+   <div class="marketplace-preview">
+    <div class="mp-cats" id="categoriesContainer">
+      <div class="mp-cat is-active">All categories</div>
+      <div class="mp-cat">Food & snacks</div>
+      <div class="mp-cat">Provisions</div>
+      <div class="mp-cat">Fashion</div>
+      <div class="mp-cat">Print & stationery</div>
+      <div class="mp-cat">Errands</div>
+    </div>
+
+    <div>
+      <div class="mp-search-container">
+        <input type="text" id="mpSearchInput" placeholder="🔍 Search sellers near Hostel Block C…">
       </div>
-      <div>
-        <div class="mp-search">🔍 Search sellers near Hostel Block C…</div>
-        <div class="mp-products">
-          <div class="mp-product"><img src="https://images.unsplash.com/photo-1606756790138-261d2b21cd75?q=80&w=400&auto=format&fit=crop" alt="Packaged jollof rice meal" loading="lazy"><div class="pi"><div class="pn">Jollof + chicken combo</div><div class="pp">₦2,500</div></div></div>
-          <div class="mp-product"><img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=400&auto=format&fit=crop" alt="Stack of notebooks and stationery" loading="lazy"><div class="pi"><div class="pn">A4 print bundle (50pg)</div><div class="pp">₦750</div></div></div>
-          <div class="mp-product"><img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=400&auto=format&fit=crop" alt="Folded clothing items" loading="lazy"><div class="pi"><div class="pn">Campus hoodie — navy</div><div class="pp">₦8,200</div></div></div>
+
+      <div class="mp-products">
+        
+        <div class="mp-product" data-category="Food & snacks">
+          <img src="https://images.unsplash.com/photo-1606756790138-261d2b21cd75?q=80&w=400&auto=format&fit=crop" alt="Packaged jollof rice meal" loading="lazy">
+          <div class="pi">
+            <div class="pn">Jollof + chicken combo</div>
+            <div class="pp">₦2,500</div>
+          </div>
         </div>
+
+        <div class="mp-product" data-category="Print & stationery">
+          <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=400&auto=format&fit=crop" alt="Stack of notebooks and stationery" loading="lazy">
+          <div class="pi">
+            <div class="pn">A4 print bundle (50pg)</div>
+            <div class="pp">₦750</div>
+          </div>
+        </div>
+
+        <div class="mp-product" data-category="Fashion">
+          <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=400&auto=format&fit=crop" alt="Folded clothing items" loading="lazy">
+          <div class="pi">
+            <div class="pn">Campus hoodie — navy</div>
+            <div class="pp">₦8,200</div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
-</section>
 
 <!-- ============================================================
      NICHES — Customer / Seller / Rider
@@ -1061,6 +1217,167 @@ footer{ border-top:1px solid var(--line); padding: 70px 0 30px; }
   <div style="margin-top:20px; font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:700; color:#00E5FF; border:1px solid #00E5FF; border-radius:10px; padding:14px;" id="slipId"></div>
 </div>
 
+
+<style>
+
+      /* Reset and Layout Container */
+    body {
+      background-color: #000000;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .marketplace-preview {
+      display: flex;
+      gap: 32px;
+      background-color: #0b0f14; /* Deep dark background */
+      padding: 32px;
+      border-radius: 16px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: #ffffff;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Sidebar Categories styling */
+    .mp-cats {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 200px;
+    }
+
+    .mp-cat {
+      padding: 12px 16px;
+      border-radius: 8px;
+      color: #8a99ad; /* Muted gray text */
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .mp-cat:hover {
+      color: #ffffff;
+    }
+
+    /* Active selected category state */
+    .mp-cat.is-active {
+      background-color: #0f272e; /* Dark teal/cyan tint background */
+      color: #00e5ff; /* Cyan active text */
+      font-weight: 600;
+    }
+
+    /* Right Content Area Wrapper */
+    .marketplace-preview > div:last-child {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Search Bar Styling */
+    .mp-search-container input {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 10px;
+      border: 1px solid #1c242c;
+      background-color: #12181f; /* Slightly lighter dark for inputs */
+      color: #ffffff;
+      font-size: 14px;
+      box-sizing: border-box;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .mp-search-container input::placeholder {
+      color: #4f6173;
+    }
+
+    .mp-search-container input:focus {
+      border-color: #00e5ff; /* Highlight color on focus */
+    }
+
+    /* Products Grid Setup */
+    .mp-products {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* 3 cards wide */
+      gap: 20px;
+    }
+
+    /* Product Card Wrapper */
+    .mp-product {
+      background-color: #12181f;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #1c242c;
+    }
+
+    /* Image sizing metrics */
+    .mp-product img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover; /* Keeps image proportions clean without stretching */
+      display: block;
+    }
+
+    /* Product Information Block */
+    .pi {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    /* Product Name Text */
+    .pn {
+      font-size: 15px;
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    /* Product Price Text */
+    .pp {
+      font-size: 14px;
+      font-weight: 600;
+      color: #00e5ff; /* Cyan accent color */
+    }
+
+    /* Responsive Design for Mobile Devices (max-width: 768px) */
+    @media (max-width: 768px) {
+      .marketplace-preview {
+        flex-direction: column;
+        gap: 16px;
+        padding: 16px;
+        margin: 0 8px;
+      }
+
+      /* Allow navigation items to wrap natively so the menu fits perfectly */
+      .mp-cats {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 6px;
+        min-width: 100%;
+      }
+
+      .mp-cat {
+        padding: 8px 12px;
+        font-size: 13px;
+        flex-shrink: 0;
+      }
+
+      /* Stack products into a single vertical layout row */
+      .mp-products {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .mp-product img {
+        height: 180px;
+      }
+    }
+</style>
+
 <script>
 (function(){
 "use strict";
@@ -1102,15 +1419,32 @@ themeToggle.addEventListener('click', ()=>{
 /* ============================================================
    NAV SCROLL STATE + MOBILE MENU
    ============================================================ */
-const nav = document.getElementById('nav');
-window.addEventListener('scroll', ()=> nav.classList.toggle('scrolled', window.scrollY > 40), {passive:true});
-const navBurger = document.getElementById('navBurger');
-const navLinks = document.getElementById('navLinks');
-navBurger.addEventListener('click', ()=>{
-  const open = navLinks.style.display === 'flex';
-  navLinks.style.cssText = open ? '' : 'display:flex; position:absolute; top:64px; left:20px; right:20px; flex-direction:column; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:20px; gap:16px;';
-});
+ document.addEventListener('DOMContentLoaded', () => {
+      const nav = document.getElementById('nav');
+      const burger = document.getElementById('navBurger');
+      const navLinks = document.querySelectorAll('#navLinks a');
 
+      // 1. Mobile Menu Action Handler
+      burger.addEventListener('click', () => {
+        nav.classList.toggle('nav-open');
+      });
+
+      // 2. Auto-close system when link destinations are selected on mobile viewports
+      navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+          nav.classList.remove('nav-open');
+        });
+      });
+
+      // 3. Scroll Watcher: updates nav background layout cleanly
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 40) {
+          nav.classList.add('scrolled');
+        } else {
+          nav.classList.remove('scrolled');
+        }
+      });
+    });
 /* ============================================================
    CUSTOM CURSOR
    ============================================================ */
@@ -1182,6 +1516,54 @@ const statObserver = new IntersectionObserver((entries)=>{
   });
 }, {threshold:0.5});
 statEls.forEach(el=> statObserver.observe(el));
+
+
+/* ============================================================
+  CATEGORIES
+   ============================================================ */
+
+ const categoriesContainer = document.getElementById('categoriesContainer');
+    const products = document.querySelectorAll('.mp-product');
+    const searchInput = document.getElementById('mpSearchInput');
+    
+    let currentCategory = 'all categories';
+
+    // Core Filtering Engine Logic
+    function filterMarketplace() {
+      const searchText = searchInput.value.toLowerCase().trim();
+
+      products.forEach(product => {
+        // Read directly from data-category string
+        const productCategory = product.getAttribute('data-category').toLowerCase().trim();
+        const productName = product.querySelector('.pn').textContent.toLowerCase();
+
+        // Check if conditions align to valid constraints
+        const matchesCategory = (currentCategory === 'all categories' || productCategory === currentCategory);
+        const matchesSearch = productName.includes(searchText);
+
+        if (matchesCategory && matchesSearch) {
+          product.style.display = "block"; 
+        } else {
+          product.style.display = "none";
+        }
+      });
+    }
+
+    // Event Delegation: Automatically listens to clicks even on newly pasted elements!
+    categoriesContainer.addEventListener('click', function(e) {
+      if (e.target && e.target.classList.contains('mp-cat')) {
+        // Toggle Active Indicator Highlights
+        document.querySelector('.mp-cat.is-active').classList.remove('is-active');
+        e.target.classList.add('is-active');
+
+        // Normalizes string names automatically
+        currentCategory = e.target.textContent.toLowerCase().trim();
+        filterMarketplace();
+      }
+    });
+
+    // Handle Active Key Listener Changes Live 
+    searchInput.addEventListener('input', filterMarketplace);
 
 /* ============================================================
    TESTIMONIAL CAROUSEL
@@ -1490,7 +1872,7 @@ document.getElementById('emailFallbackBtn').addEventListener('click', ()=>{
   const body = encodeURIComponent(
     `New CampusLink registration\n\nID: ${lastGeneratedId}\nRole: ${data.niche}\nName: ${data.firstname} ${data.surname}\nEmail: ${data.email}\nPhone: ${data.phone}\nCampus: ${data.campus}\nAddress: ${data.address}\n`
   );
-  window.location.href = `mailto:onboarding@campuslink.app?subject=${subject}&body=${body}`;
+  window.location.href = `mailto:campuslinkph1@gmail.com?subject=${subject}&body=${body}`;
   toast('Opening email client with your registration details…');
 });
 
