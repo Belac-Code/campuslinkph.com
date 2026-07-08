@@ -1876,8 +1876,35 @@ document.getElementById('emailFallbackBtn').addEventListener('click', ()=>{
   toast('Opening email client with your registration details…');
 });
 
+// /* PDF slip generation */
+// document.getElementById('downloadSlipBtn').addEventListener('click', ()=>{
+//   const data = collectFormData();
+//   document.getElementById('slipPhoto').innerHTML = uploadedPassport ? `<img src="${uploadedPassport}" style="width:100%;height:100%;object-fit:cover;">` : '';
+//   document.getElementById('slipDetails').innerHTML = `
+//     <div><strong>Name:</strong> ${data.firstname} ${data.surname}</div>
+//     <div><strong>Role:</strong> ${data.niche}</div>
+//     <div><strong>Email:</strong> ${data.email}</div>
+//     <div><strong>Phone:</strong> ${data.phone}</div>
+//     <div><strong>Campus:</strong> ${data.campus}</div>
+//     <div><strong>Registered:</strong> ${new Date().toLocaleString()}</div>
+//   `;
+//   document.getElementById('slipId').textContent = lastGeneratedId;
+
+//   const slip = document.getElementById('registration-slip');
+//   slip.style.left = '0px'; slip.style.position='fixed'; slip.style.top='-9999px';
+//   html2canvas(slip, { backgroundColor:'#0A0C10', scale:2 }).then(canvas=>{
+//     const { jsPDF } = window.jspdf;
+//     const pdf = new jsPDF({ unit:'px', format:[canvas.width/2, canvas.height/2] });
+//     pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, canvas.width/2, canvas.height/2);
+//     pdf.save(`CampusLink-${lastGeneratedId}.pdf`);
+//     toast('Registration slip downloaded.');
+//     slip.style.left = '-9999px';
+//   }).catch(()=> toast('Could not generate PDF in this environment — try downloading from a live deployment.'));
+// });
+
+
 /* PDF slip generation */
-document.getElementById('downloadSlipBtn').addEventListener('click', ()=>{
+document.getElementById('downloadSlipBtn').addEventListener('click', () => {
   const data = collectFormData();
   document.getElementById('slipPhoto').innerHTML = uploadedPassport ? `<img src="${uploadedPassport}" style="width:100%;height:100%;object-fit:cover;">` : '';
   document.getElementById('slipDetails').innerHTML = `
@@ -1890,17 +1917,68 @@ document.getElementById('downloadSlipBtn').addEventListener('click', ()=>{
   `;
   document.getElementById('slipId').textContent = lastGeneratedId;
 
+  // 1. Accurate iOS/iPadOS detection
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+  // 2. Pre-open a tab for iOS to bypass the async popup blocker
+  let pdfWindow = null;
+  if (isIOS) {
+    pdfWindow = window.open('', '_blank');
+    if (pdfWindow) {
+      pdfWindow.document.write('<p style="font-family:sans-serif; text-align:center; margin-top:50px; color:#fff;">Generating your PDF slip, please wait...</p>');
+      pdfWindow.document.body.style.backgroundColor = '#0A0C10';
+    }
+  }
+
   const slip = document.getElementById('registration-slip');
-  slip.style.left = '0px'; slip.style.position='fixed'; slip.style.top='-9999px';
-  html2canvas(slip, { backgroundColor:'#0A0C10', scale:2 }).then(canvas=>{
+  const originalStyle = slip.style.cssText; // Save original layout state
+  
+  // Bring off-screen safely for rendering
+  slip.style.position = 'fixed'; 
+  slip.style.left = '0px'; 
+  slip.style.top = '0px';
+  slip.style.zIndex = '-1';
+  slip.style.opacity = '1';
+
+  // 3. Added useCORS: true to prevent canvas tainting from uploaded images
+  html2canvas(slip, { backgroundColor: '#0A0C10', scale: 2, useCORS: true }).then(canvas => {
     const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF({ unit:'px', format:[canvas.width/2, canvas.height/2] });
-    pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, canvas.width/2, canvas.height/2);
-    pdf.save(`CampusLink-${lastGeneratedId}.pdf`);
-    toast('Registration slip downloaded.');
-    slip.style.left = '-9999px';
-  }).catch(()=> toast('Could not generate PDF in this environment — try downloading from a live deployment.'));
+    const pdf = new jsPDF({ unit: 'px', format: [canvas.width / 2, canvas.height / 2] });
+    pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, canvas.width / 2, canvas.height / 2);
+    
+    const fileName = `CampusLink-${lastGeneratedId}.pdf`;
+    const blob = pdf.output('blob');
+    const blobURL = URL.createObjectURL(blob);
+
+    // 4. Device-specific download execution
+    if (isIOS && pdfWindow) {
+      // For iOS: Redirect our pre-opened tab to the Blob URL. 
+      // This displays the PDF beautifully inline where users can tap "Share" -> "Save to Files".
+      pdfWindow.location.href = blobURL;
+      toast('Registration slip opened in a new tab. Save it to your device files.');
+    } else {
+      // For Android & Desktop: Create a clean, temporary anchor download pipeline
+      const downloadLink = document.createElement('a');
+      downloadLink.href = blobURL;
+      downloadLink.download = fileName;
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+      URL.revokeObjectURL(blobURL);
+      toast('Registration slip downloaded.');
+    }
+
+    // Clean up visibility styles back to original
+    slip.style.cssText = originalStyle;
+  }).catch((err) => {
+    console.error("PDF Generation Error: ", err);
+    if (pdfWindow) pdfWindow.close();
+    toast('Could not generate PDF in this environment.');
+    slip.style.cssText = originalStyle;
+  });
 });
+
 
 /* ============================================================
    DRAFT AUTOSAVE (localStorage)
