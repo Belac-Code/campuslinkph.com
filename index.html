@@ -1192,10 +1192,10 @@ footer{ border-top:1px solid var(--line); padding: 70px 0 30px; }
       <div class="form-step" data-step="4">
         <div class="success-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg></div>
         <h3 style="text-align:center; margin-bottom:8px;">You're registered!</h3>
-        <p style="text-align:center; color:var(--text-muted); font-size:14px; margin-bottom:24px;">Your CampusLink ID has been generated. Keep it — you'll use it to check in.</p>
+        <p style="text-align:center; color:var(--text-muted); font-size:14px; margin-bottom:24px;">Your CampusLink ID has been generated. Keep it — you'll use it to check in. <br> <b> ATTACH THE DOWNLOADED COPY OF YOUR REGISTRATION SLIP TO THE EMAIL <strong> COMPULSORY </strong> </b></p>
         <div class="id-badge"><span id="generatedId">—</span><button id="copyIdBtn" type="button">Copy</button></div>
         <div class="modal-nav" style="flex-direction:column;">
-          <button class="btn btn-primary btn-block" id="downloadSlipBtn">Download registration slip (PDF)</button>
+          <button class="btn btn-primary btn-block" id="downloadSlipBtn">Download registration slip (IMAGE)</button>
           <button class="btn btn-ghost btn-block" id="emailFallbackBtn">Email us this registration instead</button>
           <button class="btn btn-ghost btn-block" id="closeSuccessBtn">Done</button>
         </div>
@@ -1876,9 +1876,37 @@ document.getElementById('emailFallbackBtn').addEventListener('click', ()=>{
   toast('Opening email client with your registration details…');
 });
 
-/* PDF slip generation */
-document.getElementById('downloadSlipBtn').addEventListener('click', ()=>{
+// /* PDF slip generation */
+// document.getElementById('downloadSlipBtn').addEventListener('click', ()=>{
+//   const data = collectFormData();
+//   document.getElementById('slipPhoto').innerHTML = uploadedPassport ? `<img src="${uploadedPassport}" style="width:100%;height:100%;object-fit:cover;">` : '';
+//   document.getElementById('slipDetails').innerHTML = `
+//     <div><strong>Name:</strong> ${data.firstname} ${data.surname}</div>
+//     <div><strong>Role:</strong> ${data.niche}</div>
+//     <div><strong>Email:</strong> ${data.email}</div>
+//     <div><strong>Phone:</strong> ${data.phone}</div>
+//     <div><strong>Campus:</strong> ${data.campus}</div>
+//     <div><strong>Registered:</strong> ${new Date().toLocaleString()}</div>
+//   `;
+//   document.getElementById('slipId').textContent = lastGeneratedId;
+
+//   const slip = document.getElementById('registration-slip');
+//   slip.style.left = '0px'; slip.style.position='fixed'; slip.style.top='-9999px';
+//   html2canvas(slip, { backgroundColor:'#0A0C10', scale:2 }).then(canvas=>{
+//     const { jsPDF } = window.jspdf;
+//     const pdf = new jsPDF({ unit:'px', format:[canvas.width/2, canvas.height/2] });
+//     pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, canvas.width/2, canvas.height/2);
+//     pdf.save(`CampusLink-${lastGeneratedId}.pdf`);
+//     toast('Registration slip downloaded.');
+//     slip.style.left = '-9999px';
+//   }).catch(()=> toast('Could not generate PDF in this environment — try downloading from a live deployment.'));
+// });
+
+/* Image slip generation */
+document.getElementById('downloadSlipBtn').addEventListener('click', () => {
   const data = collectFormData();
+  
+  // Populate slip details
   document.getElementById('slipPhoto').innerHTML = uploadedPassport ? `<img src="${uploadedPassport}" style="width:100%;height:100%;object-fit:cover;">` : '';
   document.getElementById('slipDetails').innerHTML = `
     <div><strong>Name:</strong> ${data.firstname} ${data.surname}</div>
@@ -1890,16 +1918,34 @@ document.getElementById('downloadSlipBtn').addEventListener('click', ()=>{
   `;
   document.getElementById('slipId').textContent = lastGeneratedId;
 
+  // Prepare slip for rendering
   const slip = document.getElementById('registration-slip');
-  slip.style.left = '0px'; slip.style.position='fixed'; slip.style.top='-9999px';
-  html2canvas(slip, { backgroundColor:'#0A0C10', scale:2 }).then(canvas=>{
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF({ unit:'px', format:[canvas.width/2, canvas.height/2] });
-    pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, canvas.width/2, canvas.height/2);
-    pdf.save(`CampusLink-${lastGeneratedId}.pdf`);
-    toast('Registration slip downloaded.');
+  slip.style.left = '0px'; 
+  slip.style.position = 'fixed'; 
+  slip.style.top = '-9999px';
+  
+  html2canvas(slip, { backgroundColor: '#0A0C10', scale: 2 }).then(canvas => {
+    // 1. Convert the canvas to a JPEG data URL (1.0 = maximum quality)
+    const imgData = canvas.toDataURL('image/jpeg', 1.0);
+    
+    // 2. Create a temporary anchor element
+    const link = document.createElement('a');
+    link.href = imgData;
+    link.download = `CampusLink-${lastGeneratedId}.jpg`; // Set to .jpg
+    
+    // 3. Programmatically click the link to trigger the download
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // 4. Cleanup and notify
+    toast('Registration slip downloaded as an image.');
     slip.style.left = '-9999px';
-  }).catch(()=> toast('Could not generate PDF in this environment — try downloading from a live deployment.'));
+    
+  }).catch((err) => {
+    console.error(err);
+    toast('Could not generate image in this environment — try downloading from a live deployment.');
+  });
 });
 
 /* ============================================================
