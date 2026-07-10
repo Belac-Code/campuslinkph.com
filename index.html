@@ -635,158 +635,6 @@ footer{ border-top:1px solid var(--line); padding: 70px 0 30px; }
 @keyframes draw{ to{ stroke-dashoffset:0; } }
 
 #registration-slip{ background:#0A0C10; color:#E8EDF2; padding:32px; }
-
-
-
-        :root {
-            --bg-color: #0b0f19;
-            --accent-color: #00f2fe;
-            --accent-glow: rgba(0, 242, 254, 0.3);
-            --glass-bg: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        
-
-        /* Obsidian Glass Container */
-        .glass-container {
-            width: 90%;
-            max-width: 650px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 40px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5),
-                        0 0 40px var(--accent-glow);
-            position: relative;
-        }
-
-        /* Header Setup */
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .header h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            background: linear-gradient(to right, #fff, var(--accent-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 8px;
-        }
-
-        .header p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-        }
-
-        /* Navigation Pills */
-        .nav-pills {
-            display: flex;
-            justify-content: space-between;
-            gap: 8px;
-            margin-bottom: 35px;
-            overflow-x: auto;
-            padding-bottom: 5px;
-        }
-
-        .pill {
-            flex: 1;
-            min-width: 45px;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            cursor: pointer;
-            position: relative;
-            transition: background 0.3s ease;
-        }
-
-        .pill.active {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        /* Progress fill animation line */
-        .pill .progress-fill {
-            width: 0%;
-            height: 100%;
-            background: var(--accent-color);
-            box-shadow: 0 0 10px var(--accent-color);
-            border-radius: 10px;
-        }
-
-        .pill.active .progress-fill {
-            width: 100%;
-            transition: width 3s linear;
-        }
-
-        /* Slides Wrapper */
-        .slides-wrapper {
-            position: relative;
-            height: 180px;
-        }
-
-        .slide {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            opacity: 0;
-            transform: translateY(15px);
-            visibility: hidden;
-            transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
-        }
-
-        .slide.active {
-            opacity: 1;
-            transform: translateY(0);
-            visibility: visible;
-        }
-
-        .step-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            background: rgba(0, 242, 254, 0.1);
-            border: 1px solid rgba(0, 242, 254, 0.2);
-            color: var(--accent-color);
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            margin-bottom: 14px;
-            letter-spacing: 1px;
-        }
-
-        .slide h2 {
-            font-size: 1.4rem;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-
-        .slide p {
-            color: var(--text-muted);
-            font-size: 1rem;
-            line-height: 1.6;
-        }
-
-        /* Highlight text structural styling */
-        .highlight {
-            color: var(--accent-color);
-            font-weight: 500;
-        }
-
 </style>
 </head>
 <body data-theme="dark">
@@ -1148,14 +996,175 @@ footer{ border-top:1px solid var(--line); padding: 70px 0 30px; }
   </div>
 </section>
 
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusLink Onboarding Guide</title>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --accent-color: #00f2fe;
+            --accent-glow: rgba(0, 242, 254, 0.3);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-<!-- ============================================================
-    FORM SET UP 
-     ============================================================ -->
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background: radial-gradient(circle at 80% 20%, #1e1b4b 0%, var(--bg-color) 70%);
+        }
 
+        /* Obsidian Glass Container */
+        .glass-container {
+            width: 90%;
+            max-width: 650px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                        0 0 40px var(--accent-glow);
+            position: relative;
+        }
 
- <div class="glass-container">
+        /* Header Setup */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, #fff, var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Navigation Pills */
+        .nav-pills {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 35px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .pill {
+            flex: 1;
+            min-width: 45px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.3s ease;
+        }
+
+        .pill.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Progress fill animation line */
+        .pill .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: var(--accent-color);
+            box-shadow: 0 0 10px var(--accent-color);
+            border-radius: 10px;
+        }
+
+        .pill.active .progress-fill {
+            width: 100%;
+            transition: width 3s linear;
+        }
+
+        /* Slides Wrapper */
+        .slides-wrapper {
+            position: relative;
+            height: 180px;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            opacity: 0;
+            transform: translateY(15px);
+            visibility: hidden;
+            transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateY(0);
+            visibility: visible;
+        }
+
+        .step-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(0, 242, 254, 0.1);
+            border: 1px solid rgba(0, 242, 254, 0.2);
+            color: var(--accent-color);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            letter-spacing: 1px;
+        }
+
+        .slide h2 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .slide p {
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Highlight text structural styling */
+        .highlight {
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glass-container">
         <div class="header">
             <h1>Welcome to CampusLink</h1>
             <p>Verification & KYC Setup Guide</p>
@@ -1208,6 +1217,318 @@ footer{ border-top:1px solid var(--line); padding: 70px 0 30px; }
             </div>
         </div>
     </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const pills = document.querySelectorAll('.pill');
+        let currentIndex = 0;
+        let slideInterval;
+        const INTERVAL_TIME = 6000; // 6 Seconds Interval
+
+        function showSlide(index) {
+            // Clean slate configuration
+            slides.forEach(slide => slide.classList.remove('active'));
+            pills.forEach(pill => {
+                pill.classList.remove('active');
+                pill.querySelector('.progress-fill').style.width = '0%';
+            });
+
+            // Activate core parameters
+            currentIndex = index;
+            slides[currentIndex].classList.add('active');
+            pills[currentIndex].classList.add('active');
+
+            // Force reflow engine to trigger CSS progress bar transitions properly
+            const fill = pills[currentIndex].querySelector('.progress-fill');
+            void fill.offsetWidth; 
+            fill.style.width = '100%';
+        }
+
+        function nextSlide() {
+            let nextIndex = (currentIndex + 1) % slides.length;
+            showSlide(nextIndex);
+        }
+
+        function startTimer() {
+            clearInterval(slideInterval);
+            slideInterval = setInterval(nextSlide, INTERVAL_TIME);
+        }
+
+        // Manual override navigation
+        function goToSlide(index) {
+            showSlide(index);
+            startTimer(); // Reset timing cadence on manual interaction
+        }
+
+        // Initialization execution
+        showSlide(0);
+        startTimer();
+    </script>
+</body>
+</html> -->
+
+<div class="cl-guide-wrapper">
+    <div class="glass-container">
+        <div class="header">
+            <h1>Welcome to CampusLink</h1>
+            <p>Verification & KYC Setup Guide</p>
+        </div>
+
+        <div class="nav-pills" id="navPills">
+            <div class="pill active" onclick="goToSlide(0)"><div class="progress-fill"></div></div>
+            <div class="pill" onclick="goToSlide(1)"><div class="progress-fill"></div></div>
+            <div class="pill" onclick="goToSlide(2)"><div class="progress-fill"></div></div>
+            <div class="pill" onclick="goToSlide(3)"><div class="progress-fill"></div></div>
+            <div class="pill" onclick="goToSlide(4)"><div class="progress-fill"></div></div>
+            <div class="pill" onclick="goToSlide(5)"><div class="progress-fill"></div></div>
+        </div>
+
+        <div class="slides-wrapper">
+            <div class="slide active">
+                <span class="step-badge">Step 01</span>
+                <h2>Choose Your Niche</h2>
+                <p>Launch the portal, click <span class="highlight">"Join CampusLink"</span>, and pick the <span class="highlight">Seller role</span> to start configuring your store profile.</p>
+            </div>
+
+            <div class="slide">
+                <span class="step-badge">Step 02</span>
+                <h2>Upload General Details</h2>
+                <p>Provide your fundamental parameters including business name, active phone number, and targeted campus hub location.</p>
+            </div>
+
+            <div class="slide">
+                <span class="step-badge">Step 03</span>
+                <h2>KYC & Inventory Setup</h2>
+                <p>Upload a clean identification <span class="highlight">passport photo</span> alongside crisp images showcasing the catalog of items you intend to retail.</p>
+            </div>
+
+            <div class="slide">
+                <span class="step-badge">Step 04</span>
+                <h2>Generate Registration Slip</h2>
+                <p>Once your profile matrix is complete, review your data ecosystem and trigger the instant download of your official <span class="highlight">Registration Slip</span>.</p>
+            </div>
+
+            <div class="slide">
+                <span class="step-badge">Step 05</span>
+                <h2>Email Submission Routing</h2>
+                <p>Launch your email terminal, address it to the onboarding node, and ensure you explicitly <span class="highlight">attach the downloaded slip</span>.</p>
+            </div>
+
+            <div class="slide">
+                <span class="step-badge">Step 06</span>
+                <h2>Verification Hold Matrix</h2>
+                <p>Your documentation is safely logged. Keep an active eye on your inbox for our official clearance and portal deployment confirmation code.</p>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --accent-color: #00f2fe;
+            --accent-glow: rgba(0, 242, 254, 0.3);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+
+        /* Scoped wrapper wrapper to isolate layout styles from your parent file */
+        .cl-guide-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+
+        .cl-guide-wrapper * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Mobile-First Obsidian Glass Container */
+        .cl-guide-wrapper .glass-container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 24px 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                        0 0 30px var(--accent-glow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cl-guide-wrapper .header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .cl-guide-wrapper .header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, #fff, var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+
+        .cl-guide-wrapper .header p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .cl-guide-wrapper .nav-pills {
+            display: flex;
+            justify-content: space-between;
+            gap: 6px;
+            margin-bottom: 24px;
+            width: 100%;
+        }
+
+        .cl-guide-wrapper .pill {
+            flex: 1;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .cl-guide-wrapper .pill.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .cl-guide-wrapper .pill .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: var(--accent-color);
+            box-shadow: 0 0 8px var(--accent-color);
+            border-radius: 10px;
+        }
+
+        .cl-guide-wrapper .pill.active .progress-fill {
+            width: 100%;
+            transition: width 3s linear;
+        }
+
+        .cl-guide-wrapper .slides-wrapper {
+            position: relative;
+            min-height: 150px;
+            width: 100%;
+        }
+
+        .cl-guide-wrapper .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            opacity: 0;
+            transform: translateY(10px);
+            visibility: hidden;
+            transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .cl-guide-wrapper .slide.active {
+            opacity: 1;
+            transform: translateY(0);
+            visibility: visible;
+        }
+
+        .cl-guide-wrapper .step-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            background: rgba(0, 242, 254, 0.1);
+            border: 1px solid rgba(0, 242, 254, 0.2);
+            color: var(--accent-color);
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .cl-guide-wrapper .slide h2 {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .cl-guide-wrapper .slide p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .cl-guide-wrapper .highlight {
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+    </style>
+
+    <script>
+        (function() {
+            const wrapper = document.querySelector('.cl-guide-wrapper');
+            const slides = wrapper.querySelectorAll('.slide');
+            const pills = wrapper.querySelectorAll('.pill');
+            let currentIndex = 0;
+            let slideInterval;
+            const INTERVAL_TIME = 6000;
+
+            window.goToSlide = function(index) {
+                showSlide(index);
+                startTimer();
+            }
+
+            function showSlide(index) {
+                slides.forEach(slide => slide.classList.remove('active'));
+                pills.forEach(pill => {
+                    pill.classList.remove('active');
+                    pill.querySelector('.progress-fill').style.width = '0%';
+                });
+
+                currentIndex = index;
+                slides[currentIndex].classList.add('active');
+                pills[currentIndex].classList.add('active');
+
+                const fill = pills[currentIndex].querySelector('.progress-fill');
+                void fill.offsetWidth; 
+                fill.style.width = '100%';
+            }
+
+            function nextSlide() {
+                let nextIndex = (currentIndex + 1) % slides.length;
+                showSlide(nextIndex);
+            }
+
+            function startTimer() {
+                clearInterval(slideInterval);
+                slideInterval = setInterval(nextSlide, INTERVAL_TIME);
+            }
+
+            showSlide(0);
+            startTimer();
+        })();
+    </script>
+</div>
+
+
+
+
+
+
 
 
 
@@ -2394,54 +2715,6 @@ function loadDraft(){
 function clearDraft(){ localStorage.removeItem(DRAFT_KEY); }
 
 })();
-
-
-//DIRECTION SET UP 
-
-  const slides = document.querySelectorAll('.slide');
-        const pills = document.querySelectorAll('.pill');
-        let currentIndex = 0;
-        let slideInterval;
-        const INTERVAL_TIME = 6000; // 6 Seconds Interval
-
-        function showSlide(index) {
-            // Clean slate configuration
-            slides.forEach(slide => slide.classList.remove('active'));
-            pills.forEach(pill => {
-                pill.classList.remove('active');
-                pill.querySelector('.progress-fill').style.width = '0%';
-            });
-
-            // Activate core parameters
-            currentIndex = index;
-            slides[currentIndex].classList.add('active');
-            pills[currentIndex].classList.add('active');
-
-            // Force reflow engine to trigger CSS progress bar transitions properly
-            const fill = pills[currentIndex].querySelector('.progress-fill');
-            void fill.offsetWidth; 
-            fill.style.width = '100%';
-        }
-
-        function nextSlide() {
-            let nextIndex = (currentIndex + 1) % slides.length;
-            showSlide(nextIndex);
-        }
-
-        function startTimer() {
-            clearInterval(slideInterval);
-            slideInterval = setInterval(nextSlide, INTERVAL_TIME);
-        }
-
-        // Manual override navigation
-        function goToSlide(index) {
-            showSlide(index);
-            startTimer(); // Reset timing cadence on manual interaction
-        }
-
-        // Initialization execution
-        showSlide(0);
-        startTimer();
 </script>
 </body>
 </html>
