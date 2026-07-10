@@ -635,6 +635,158 @@ footer{ border-top:1px solid var(--line); padding: 70px 0 30px; }
 @keyframes draw{ to{ stroke-dashoffset:0; } }
 
 #registration-slip{ background:#0A0C10; color:#E8EDF2; padding:32px; }
+
+
+
+        :root {
+            --bg-color: #0b0f19;
+            --accent-color: #00f2fe;
+            --accent-glow: rgba(0, 242, 254, 0.3);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        
+
+        /* Obsidian Glass Container */
+        .glass-container {
+            width: 90%;
+            max-width: 650px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                        0 0 40px var(--accent-glow);
+            position: relative;
+        }
+
+        /* Header Setup */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, #fff, var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Navigation Pills */
+        .nav-pills {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 35px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .pill {
+            flex: 1;
+            min-width: 45px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.3s ease;
+        }
+
+        .pill.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Progress fill animation line */
+        .pill .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: var(--accent-color);
+            box-shadow: 0 0 10px var(--accent-color);
+            border-radius: 10px;
+        }
+
+        .pill.active .progress-fill {
+            width: 100%;
+            transition: width 3s linear;
+        }
+
+        /* Slides Wrapper */
+        .slides-wrapper {
+            position: relative;
+            height: 180px;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            opacity: 0;
+            transform: translateY(15px);
+            visibility: hidden;
+            transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateY(0);
+            visibility: visible;
+        }
+
+        .step-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(0, 242, 254, 0.1);
+            border: 1px solid rgba(0, 242, 254, 0.2);
+            color: var(--accent-color);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            letter-spacing: 1px;
+        }
+
+        .slide h2 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .slide p {
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Highlight text structural styling */
+        .highlight {
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+
 </style>
 </head>
 <body data-theme="dark">
@@ -995,6 +1147,70 @@ footer{ border-top:1px solid var(--line); padding: 70px 0 30px; }
     </div>
   </div>
 </section>
+
+
+
+<!-- ============================================================
+    FORM SET UP 
+     ============================================================ -->
+
+
+ <div class="glass-container">
+        <div class="header">
+            <h1>Welcome to CampusLink</h1>
+            <p>Verification & KYC Setup Guide</p>
+        </div>
+
+        <div class="nav-pills" id="navPills">
+            <div class="pill active" onclick="goToSlide(0)"><div class="progress-fill"></div></div>
+            <div class="pill" onclick="goToSlide(1)"><div class="progress-fill"></div></div>
+            <div class="pill" onclick="goToSlide(2)"><div class="progress-fill"></div></div>
+            <div class="pill" onclick="goToSlide(3)"><div class="progress-fill"></div></div>
+            <div class="pill" onclick="goToSlide(4)"><div class="progress-fill"></div></div>
+            <div class="pill" onclick="goToSlide(5)"><div class="progress-fill"></div></div>
+        </div>
+
+        <div class="slides-wrapper">
+            <div class="slide active">
+                <span class="step-badge">Step 01</span>
+                <h2>Choose Your Niche</h2>
+                <p>Launch the portal, click <span class="highlight">"Join CampusLink"</span>, and pick the <span class="highlight">Your role</span> to start configuring your store profile.</p>
+            </div>
+
+            <div class="slide">
+                <span class="step-badge">Step 02</span>
+                <h2>Upload General Details</h2>
+                <p>Provide your fundamental parameters including business name, active phone number, and targeted campus hub location.</p>
+            </div>
+
+            <div class="slide">
+                <span class="step-badge">Step 03</span>
+                <h2>KYC & Inventory Setup</h2>
+                <p>Upload a clean identification <span class="highlight">passport photo</span> alongside crisp images showcasing the catalog of items you intend to retail.</p>
+            </div>
+
+            <div class="slide">
+                <span class="step-badge">Step 04</span>
+                <h2>Generate Registration Slip</h2>
+                <p>Once your profile matrix is complete, review your data ecosystem and trigger the instant download of your official <span class="highlight">Registration Slip</span>.</p>
+            </div>
+
+            <div class="slide">
+                <span class="step-badge">Step 05</span>
+                <h2>Email Submission Routing</h2>
+                <p>Launch your email terminal, address it to the onboarding node, and ensure you explicitly <span class="highlight">attach the downloaded slip</span>.</p>
+            </div>
+
+            <div class="slide">
+                <span class="step-badge">Step 06</span>
+                <h2>Verification Hold Matrix</h2>
+                <p>Your documentation is safely logged. Keep an active eye on your inbox for our official clearance and portal deployment confirmation code.</p>
+            </div>
+        </div>
+    </div>
+
+
+
 
 <!-- ============================================================
      COVERAGE MAP TEASER
@@ -1965,126 +2181,90 @@ document.getElementById('emailFallbackBtn').addEventListener('click', ()=>{
   toast('Opening email client with your registration details…');
 });
 
-// /* PDF slip generation */
-// document.getElementById('downloadSlipBtn').addEventListener('click', ()=>{
-//   const data = collectFormData();
-//   document.getElementById('slipPhoto').innerHTML = uploadedPassport ? `<img src="${uploadedPassport}" style="width:100%;height:100%;object-fit:cover;">` : '';
-//   document.getElementById('slipDetails').innerHTML = `
-//     <div><strong>Name:</strong> ${data.firstname} ${data.surname}</div>
-//     <div><strong>Role:</strong> ${data.niche}</div>
-//     <div><strong>Email:</strong> ${data.email}</div>
-//     <div><strong>Phone:</strong> ${data.phone}</div>
-//     <div><strong>Campus:</strong> ${data.campus}</div>
-//     <div><strong>Registered:</strong> ${new Date().toLocaleString()}</div>
-//   `;
-//   document.getElementById('slipId').textContent = lastGeneratedId;
 
-//   const slip = document.getElementById('registration-slip');
-//   slip.style.left = '0px'; slip.style.position='fixed'; slip.style.top='-9999px';
-//   html2canvas(slip, { backgroundColor:'#0A0C10', scale:2 }).then(canvas=>{
-//     const { jsPDF } = window.jspdf;
-//     const pdf = new jsPDF({ unit:'px', format:[canvas.width/2, canvas.height/2] });
-//     pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, canvas.width/2, canvas.height/2);
-//     pdf.save(`CampusLink-${lastGeneratedId}.pdf`);
-//     toast('Registration slip downloaded.');
-//     slip.style.left = '-9999px';
-//   }).catch(()=> toast('Could not generate PDF in this environment — try downloading from a live deployment.'));
-// });
-
-// document.getElementById('downloadSlipBtn').addEventListener('click', ()=>{
+// //DOWNLOAD BUTTON LOGIC
+// document.getElementById('downloadSlipBtn').addEventListener('click', async () => {
 //   const data = collectFormData();
   
-//   // 1. Populate your existing slip elements
-//   document.getElementById('slipPhoto').innerHTML = uploadedPassport 
-//     ? `<img src="${uploadedPassport}" style="width:100%; height:100%; object-fit:cover; border-radius:4px;">` 
-//     : '';
+//   if (typeof toast === 'function') {
+//       toast('Generating your image slip. Please wait...');
+//   }
+
+//   // 1. Create a temporary container off-screen
+//   const slipContainer = document.createElement('div');
+//   slipContainer.style.position = 'absolute';
+//   slipContainer.style.left = '-9999px'; // Keep it hidden from the user
+//   slipContainer.style.top = '0';
+//   slipContainer.style.width = '600px'; 
+//   slipContainer.style.backgroundColor = '#ffffff'; // Ensure a solid white background
+//   slipContainer.style.padding = '40px';
+//   slipContainer.style.fontFamily = 'sans-serif';
+//   slipContainer.style.color = 'black';
+
+//   // 2. Build the HTML using inline styles for perfect rendering
+//   slipContainer.innerHTML = `
+//     <div style="border: 1px solid #ccc; padding: 30px; border-radius: 8px;">
+//       <div style="text-align: center; border-bottom: 2px solid #eee; padding-bottom: 20px; margin-bottom: 20px;">
+//         <h2 style="margin: 0 0 10px 0;">CampusLink Registration Slip</h2>
+//         <p style="color: #666; font-size: 14px; margin: 0;">ID: <strong>${lastGeneratedId}</strong></p>
+//       </div>
+      
+//       <div style="text-align: center; margin-bottom: 20px;">
+//         ${uploadedPassport 
+//           ? `<img src="${uploadedPassport}" alt="Passport" crossorigin="anonymous" style="width: 150px; height: 150px; object-fit: cover; border-radius: 8px; border: 2px solid #ddd;">` 
+//           : `<div style="width:150px; height:150px; background:#f5f5f5; border:1px dashed #ccc; display:inline-block; line-height:150px; color:#999; border-radius:8px;">No Photo</div>`
+//         }
+//       </div>
+
+//       <div style="font-size: 16px; line-height: 1.8;">
+//         <div style="margin-bottom: 12px;"><strong>Name:</strong> ${data.firstname} ${data.surname}</div>
+//         <div style="margin-bottom: 12px;"><strong>Role:</strong> ${data.niche}</div>
+//         <div style="margin-bottom: 12px;"><strong>Email:</strong> ${data.email}</div>
+//         <div style="margin-bottom: 12px;"><strong>Phone:</strong> ${data.phone}</div>
+//         <div style="margin-bottom: 12px;"><strong>Campus:</strong> ${data.campus}</div>
+//         <div style="margin-bottom: 12px;"><strong>Address:</strong> ${data.address || '—'}</div>
+//         <div style="margin-bottom: 12px;"><strong>Registered:</strong> ${new Date().toLocaleString()}</div>
+//       </div>
+//     </div>
+//   `;
+
+//   // Append it to the body so html2canvas can read it
+//   document.body.appendChild(slipContainer);
+
+//   try {
+//     // 3. Take the screenshot
+//     const canvas = await html2canvas(slipContainer, {
+//       scale: 2, // Doubles the resolution for a crisper image
+//       useCORS: true, // Crucial if the passport image is hosted externally
+//       backgroundColor: '#ffffff'
+//     });
+
+//     // 4. Convert the canvas to an image URL
+//     const imageUrl = canvas.toDataURL('image/png');
+
+//     // 5. Trigger the automatic download
+//     const downloadLink = document.createElement('a');
+//     downloadLink.href = imageUrl;
+//     downloadLink.download = `CampusLink_Slip_${lastGeneratedId}.png`;
     
-//   document.getElementById('slipDetails').innerHTML = `
-//     <div style="margin-bottom: 8px;"><strong>Name:</strong> ${data.firstname} ${data.surname}</div>
-//     <div style="margin-bottom: 8px;"><strong>Role:</strong> ${data.niche}</div>
-//     <div style="margin-bottom: 8px;"><strong>Email:</strong> ${data.email}</div>
-//     <div style="margin-bottom: 8px;"><strong>Phone:</strong> ${data.phone}</div>
-//     <div style="margin-bottom: 8px;"><strong>Campus:</strong> ${data.campus}</div>
-//     <div style="margin-bottom: 8px;"><strong>Registered:</strong> ${new Date().toLocaleString()}</div>
-//   `;
-//   document.getElementById('slipId').textContent = lastGeneratedId;
+//     // Append, click, and remove the link
+//     document.body.appendChild(downloadLink);
+//     downloadLink.click();
+//     document.body.removeChild(downloadLink);
 
-//   toast('Opening print dialog. Please select "Save as PDF" as your destination.');
-
-//   // 2. Trigger the native print dialog after a brief delay for rendering
-//   setTimeout(() => {
-//     window.print();
-//   }, 300);
+//   } catch (error) {
+//     console.error("Error generating image:", error);
+//     if (typeof toast === 'function') {
+//         toast("Failed to generate image.");
+//     }
+//   } finally {
+//     // 6. Clean up the off-screen DOM element regardless of success or failure
+//     document.body.removeChild(slipContainer);
+//   }
 // });
 
 
-
-// document.getElementById('downloadSlipBtn').addEventListener('click', ()=>{
-//   const data = collectFormData();
-  
-//   // 1. Build the clean HTML for the slip
-//   const slipHTML = `
-//     <html>
-//       <head>
-//         <title>CampusLink Registration - ${lastGeneratedId}</title>
-//         <style>
-//           body { font-family: sans-serif; padding: 40px; color: black; background: white; }
-//           .slip-container { max-width: 600px; margin: 0 auto; border: 1px solid #ccc; padding: 30px; border-radius: 8px; }
-//           .header { text-align: center; border-bottom: 2px solid #eee; padding-bottom: 20px; margin-bottom: 20px; }
-//           .photo-box { text-align: center; margin-bottom: 20px; }
-//           .photo-box img { width: 150px; height: 150px; object-fit: cover; border-radius: 8px; border: 2px solid #ddd; }
-//           .details div { margin-bottom: 12px; font-size: 16px; }
-//         </style>
-//       </head>
-//       <body>
-//         <div class="slip-container">
-//           <div class="header">
-//             <h2>CampusLink Registration Slip</h2>
-//             <p style="color: #666; font-size: 14px;">ID: <strong>${lastGeneratedId}</strong></p>
-//           </div>
-          
-//           <div class="photo-box">
-//             ${uploadedPassport 
-//               ? `<img src="${uploadedPassport}" alt="Passport">` 
-//               : `<div style="width:150px; height:150px; background:#f5f5f5; border:1px dashed #ccc; display:inline-block; line-height:150px; color:#999; border-radius:8px;">No Photo</div>`
-//             }
-//           </div>
-
-//           <div class="details">
-//             <div><strong>Name:</strong> ${data.firstname} ${data.surname}</div>
-//             <div><strong>Role:</strong> ${data.niche}</div>
-//             <div><strong>Email:</strong> ${data.email}</div>
-//             <div><strong>Phone:</strong> ${data.phone}</div>
-//             <div><strong>Campus:</strong> ${data.campus}</div>
-//             <div><strong>Address:</strong> ${data.address || '—'}</div>
-//             <div><strong>Registered:</strong> ${new Date().toLocaleString()}</div>
-//           </div>
-//         </div>
-//       </body>
-//     </html>
-//   `;
-
-//   toast('Preparing PDF. Please select "Save as PDF" in the print dialog.');
-
-//   // 2. Open a temporary window, write the HTML, print, and close
-//   const printWindow = window.open('', '_blank', 'width=800,height=800');
-//   printWindow.document.open();
-//   printWindow.document.write(slipHTML);
-//   printWindow.document.close();
-
-//   // Wait a split second to ensure the image loads, then print
-//   setTimeout(() => {
-//     printWindow.focus();
-//     printWindow.print();
-//     printWindow.close(); // Closes the temporary window automatically after printing/saving
-//   }, 350);
-// });
-
-
-
-
-
-
+// DOWNLOAD BUTTON LOGIC
 document.getElementById('downloadSlipBtn').addEventListener('click', async () => {
   const data = collectFormData();
   
@@ -2095,13 +2275,37 @@ document.getElementById('downloadSlipBtn').addEventListener('click', async () =>
   // 1. Create a temporary container off-screen
   const slipContainer = document.createElement('div');
   slipContainer.style.position = 'absolute';
-  slipContainer.style.left = '-9999px'; // Keep it hidden from the user
+  slipContainer.style.left = '-9999px'; 
   slipContainer.style.top = '0';
   slipContainer.style.width = '600px'; 
-  slipContainer.style.backgroundColor = '#ffffff'; // Ensure a solid white background
+  slipContainer.style.backgroundColor = '#ffffff'; 
   slipContainer.style.padding = '40px';
   slipContainer.style.fontFamily = 'sans-serif';
   slipContainer.style.color = 'black';
+
+  // --- NEW LOGIC: Generate Product Samples HTML ---
+  // Assuming 'uploadedSamples' is an array of image URLs/Base64 strings
+  let productSamplesHtml = '';
+  const isSeller = data.niche && data.niche.toLowerCase().includes('seller');
+  
+  if (isSeller && typeof uploadedSamples !== 'undefined' && uploadedSamples.length > 0) {
+    // Limit to 4 images to prevent the slip from becoming too long
+    const imagesToDisplay = uploadedSamples.slice(0, 4); 
+    
+    const imageTags = imagesToDisplay.map(img => `
+      <img src="${img}" crossorigin="anonymous" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd;">
+    `).join('');
+
+    productSamplesHtml = `
+      <div style="margin-top: 20px; padding-top: 20px; border-top: 2px dashed #eee;">
+        <h4 style="margin: 0 0 15px 0; color: #444; text-align: center;">Product Samples</h4>
+        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+          ${imageTags}
+        </div>
+      </div>
+    `;
+  }
+  // ------------------------------------------------
 
   // 2. Build the HTML using inline styles for perfect rendering
   slipContainer.innerHTML = `
@@ -2127,7 +2331,8 @@ document.getElementById('downloadSlipBtn').addEventListener('click', async () =>
         <div style="margin-bottom: 12px;"><strong>Address:</strong> ${data.address || '—'}</div>
         <div style="margin-bottom: 12px;"><strong>Registered:</strong> ${new Date().toLocaleString()}</div>
       </div>
-    </div>
+
+      ${productSamplesHtml} </div>
   `;
 
   // Append it to the body so html2canvas can read it
@@ -2136,8 +2341,8 @@ document.getElementById('downloadSlipBtn').addEventListener('click', async () =>
   try {
     // 3. Take the screenshot
     const canvas = await html2canvas(slipContainer, {
-      scale: 2, // Doubles the resolution for a crisper image
-      useCORS: true, // Crucial if the passport image is hosted externally
+      scale: 2, 
+      useCORS: true, 
       backgroundColor: '#ffffff'
     });
 
@@ -2149,7 +2354,6 @@ document.getElementById('downloadSlipBtn').addEventListener('click', async () =>
     downloadLink.href = imageUrl;
     downloadLink.download = `CampusLink_Slip_${lastGeneratedId}.png`;
     
-    // Append, click, and remove the link
     document.body.appendChild(downloadLink);
     downloadLink.click();
     document.body.removeChild(downloadLink);
@@ -2160,11 +2364,10 @@ document.getElementById('downloadSlipBtn').addEventListener('click', async () =>
         toast("Failed to generate image.");
     }
   } finally {
-    // 6. Clean up the off-screen DOM element regardless of success or failure
+    // 6. Clean up the off-screen DOM element
     document.body.removeChild(slipContainer);
   }
 });
-
 
 
 /* ============================================================
@@ -2191,6 +2394,54 @@ function loadDraft(){
 function clearDraft(){ localStorage.removeItem(DRAFT_KEY); }
 
 })();
+
+
+//DIRECTION SET UP 
+
+  const slides = document.querySelectorAll('.slide');
+        const pills = document.querySelectorAll('.pill');
+        let currentIndex = 0;
+        let slideInterval;
+        const INTERVAL_TIME = 6000; // 6 Seconds Interval
+
+        function showSlide(index) {
+            // Clean slate configuration
+            slides.forEach(slide => slide.classList.remove('active'));
+            pills.forEach(pill => {
+                pill.classList.remove('active');
+                pill.querySelector('.progress-fill').style.width = '0%';
+            });
+
+            // Activate core parameters
+            currentIndex = index;
+            slides[currentIndex].classList.add('active');
+            pills[currentIndex].classList.add('active');
+
+            // Force reflow engine to trigger CSS progress bar transitions properly
+            const fill = pills[currentIndex].querySelector('.progress-fill');
+            void fill.offsetWidth; 
+            fill.style.width = '100%';
+        }
+
+        function nextSlide() {
+            let nextIndex = (currentIndex + 1) % slides.length;
+            showSlide(nextIndex);
+        }
+
+        function startTimer() {
+            clearInterval(slideInterval);
+            slideInterval = setInterval(nextSlide, INTERVAL_TIME);
+        }
+
+        // Manual override navigation
+        function goToSlide(index) {
+            showSlide(index);
+            startTimer(); // Reset timing cadence on manual interaction
+        }
+
+        // Initialization execution
+        showSlide(0);
+        startTimer();
 </script>
 </body>
 </html>
