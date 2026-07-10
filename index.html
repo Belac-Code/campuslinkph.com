@@ -1422,34 +1422,40 @@ footer{ border-top:1px solid var(--line); padding: 70px 0 30px; }
         }
 
        .cl-guide-wrapper .slides-wrapper {
-            position: relative;
-            min-height: 150px;
-            width: 100%;
-            height: auto;
-            padding:10px;
+    position: relative;
+    width: 100%;
+    height: auto;
+    padding: 10px;
+    /* Removed min-height so it can shrink or grow naturally based on text size */
+}
 
-        }
+.cl-guide-wrapper .slide {
+    position: relative; /* CHANGED from absolute to relative so the container adapts to the text height */
+    display: none;      /* CHANGED from opacity/visibility to display control to hide inactive steps safely */
+    width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    padding: 20px;
+}
 
+.cl-guide-wrapper .slide.active {
+    display: block;    /* Makes the active slide visible and calculate its height on screen */
+    opacity: 1;
+    transform: translateY(0);
+    animation: slideFadeIn 0.4s ease-in-out;
+}
 
-        .cl-guide-wrapper .slide {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            opacity: 0;
-            transform: translateY(10px);
-            visibility: hidden;
-            transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            padding:20px;
-        }
-
-        .cl-guide-wrapper .slide.active {
-            opacity: 1;
-            transform: translateY(0);
-            visibility: visible;
-        }
+/* Keyframe for a smooth, high-end opacity entry animation */
+@keyframes slideFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
         .cl-guide-wrapper .step-badge {
             display: inline-block;
